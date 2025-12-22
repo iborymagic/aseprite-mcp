@@ -12,13 +12,14 @@
     "start": "node build/index.js",
     "dev": "pnpm run build && pnpm run start"
   },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.1",
+    "zod": "^4.2.1"
+  },
   "devDependencies": {
     "@types/node": "^25.0.0",
     "typescript": "^5.0.0"
   },
   "author": "iborymagic",
-  "license": "MIT",
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.25.1"
-  }
+  "license": "MIT"
 }
