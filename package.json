@@ -4,9 +4,21 @@
   "description": "MCP server for using Aseprite API",
   "main": "index.js",
   "type": "module",
+  "bin": {
+    "aseprite-mcp": "./build/index.js"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "start": "node build/index.js",
+    "dev": "pnpm run build && pnpm run start"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.0",
+    "typescript": "^5.0.0"
   },
   "author": "iborymagic",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.1"
+  }
 }
