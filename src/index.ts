@@ -4,6 +4,7 @@ import { resolveAsepritePath } from "./aseprite/env.js";
 import { runAsepriteCommand } from "./aseprite/cli.js";
 import z from "zod";
 import { readFileSync } from "node:fs";
+import { ensureSafePath } from "./aseprite/path.js";
 
 const server = new McpServer({
   name: "aseprite-mcp",
@@ -80,17 +81,21 @@ server.registerTool(
   },
   async ({ inputFile, outputSheet, sheetType, dataFile, tag, outputFormat }) => {
     try {
+      const inputAbsPath = ensureSafePath(inputFile, { mustExist: true });
+      const sheetAbsPath = ensureSafePath(outputSheet, { createDirIfNeeded: true });
+      const dataAbsPath = dataFile ? ensureSafePath(dataFile, { createDirIfNeeded: true }) : undefined;
+      
       const args: string[] = [
         "--batch",
-        `"${inputFile}"`,
+        `"${inputAbsPath}"`,
         "--sheet",
-        `"${outputSheet}"`,
+        `"${sheetAbsPath}"`,
         "--sheet-type",
         sheetType
       ];
   
       if (tag) args.push("--tag", `"${tag}"`);
-      if (dataFile) args.push("--data", `"${dataFile}"`);
+      if (dataAbsPath) args.push("--data", `"${dataAbsPath}"`);
   
       const result = await runAsepriteCommand(args);
   
@@ -103,8 +108,8 @@ server.registerTool(
               `command: ${result.command}`,
               result.stdout.trim() ? `stdout:\n${result.stdout.trim()}` : "",
               result.stderr.trim() ? `stderr:\n${result.stderr.trim()}` : "",
-              `sheet: ${outputSheet}`,
-              dataFile ? `data: ${dataFile}` : ""
+              `sheet: ${sheetAbsPath}`,
+              dataAbsPath ? `data: ${dataAbsPath}` : ""
             ]
               .filter(Boolean)
               .join("\n")
@@ -113,10 +118,10 @@ server.registerTool(
               tool: "aseprite_export_sheet",
               command: result.command,
               details: {
-                inputFile,
-                outputSheet,
+                inputFile: inputAbsPath,
+                outputSheet: sheetAbsPath,
                 sheetType,
-                dataFile: dataFile ? dataFile : undefined,
+                dataFile: dataAbsPath ? dataAbsPath : undefined,
                 tag: tag ? tag : undefined,
                 stdout: result.stdout.trim(),
                 stderr: result.stderr.trim(),
@@ -162,11 +167,14 @@ server.registerTool(
   },
   async ({ inputFile, outputPattern, tag, outputFormat }) => {
     try {
+      const inputAbsPath = ensureSafePath(inputFile, { mustExist: true });
+      const outputAbsPath = ensureSafePath(outputPattern, { createDirIfNeeded: true });
+
       const args: string[] = [
         "--batch",
-        `"${inputFile}"`,
+        `"${inputAbsPath}"`,
         "--save-as",
-        `"${outputPattern}"`
+        `"${outputAbsPath}"`
       ];
   
       if (tag) args.push("--tag", `"${tag}"`);
@@ -182,7 +190,7 @@ server.registerTool(
               `command: ${result.command}`,
               result.stdout.trim() ? `stdout:\n${result.stdout.trim()}` : "",
               result.stderr.trim() ? `stderr:\n${result.stderr.trim()}` : "",
-              `pattern: ${outputPattern}`
+              `pattern: ${outputAbsPath}`
             ]
               .filter(Boolean)
               .join("\n")
@@ -191,8 +199,8 @@ server.registerTool(
               tool: "aseprite_export_frames",
               command: result.command,
               details: {
-                inputFile,
-                outputPattern,
+                inputFile: inputAbsPath,
+                outputPattern: outputAbsPath,
                 tag: tag ? tag : undefined,
                 stdout: result.stdout.trim(),
                 stderr: result.stderr.trim(),
@@ -238,11 +246,14 @@ server.registerTool(
   },
   async ({ inputFile, dataFile, format, outputFormat }) => {
     try {
+      const inputAbsPath = ensureSafePath(inputFile, { mustExist: true });
+      const dataAbsPath = ensureSafePath(dataFile, { createDirIfNeeded: true });
+
       const args: string[] = [
         "--batch",
-        `"${inputFile}"`,
+        `"${inputAbsPath}"`,
         "--data",
-        `"${dataFile}"`
+        `"${dataAbsPath}"`
       ];
   
       if (format) args.push("--format", `"${format}"`);
@@ -251,7 +262,7 @@ server.registerTool(
   
       let metaText = "";
       try {
-        metaText = readFileSync(dataFile, "utf8");
+        metaText = readFileSync(dataAbsPath, "utf8");
       } catch (e: unknown) {
         metaText = `Failed to read metadata: ${e instanceof Error ? e.message : String(e)}`;
       }
@@ -265,7 +276,7 @@ server.registerTool(
               `command: ${result.command}`,
               result.stdout.trim() ? `stdout:\n${result.stdout.trim()}` : "",
               result.stderr.trim() ? `stderr:\n${result.stderr.trim()}` : "",
-              `dataFile: ${dataFile}`,
+              `dataFile: ${dataAbsPath}`,
               "",
               "----- metadata -----",
               metaText
@@ -277,8 +288,8 @@ server.registerTool(
               tool: "aseprite_export_metadata",
               command: result.command,
               details: {
-                inputFile,
-                dataFile,
+                inputFile: inputAbsPath,
+                dataFile: dataAbsPath,
                 format: format ? format : undefined,
                 stdout: result.stdout.trim(),
                 stderr: result.stderr.trim(),
