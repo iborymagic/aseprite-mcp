@@ -1,5 +1,6 @@
 import { errorResult, successResult } from "../util.js";
-import { findLuaTemplate, LUA_TEMPLATES, runLuaScript } from "./templates.js";
+import { findLuaTemplate, LUA_TEMPLATES } from "./template.js";
+import { runLuaScript } from "./cli.js";
 import { ensureSafePath } from "../aseprite/path.js";
 import path from "node:path";
 import z from "zod";
