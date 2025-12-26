@@ -47,7 +47,7 @@ function getSteamVdfPaths(): string[] {
       ];
 
     default:
-      // linux
+      // Linux
       return [
         path.join(
           os.homedir(),
@@ -64,7 +64,7 @@ function getSteamVdfPaths(): string[] {
 function parseSteamLibraries(vdfContent: string): string[] {
   const lines = vdfContent.split("\n");
 
-  const paths: string[] = [];
+  const paths = [];
 
   for (const line of lines) {
     const match = line.match(/"(\d+)"\s+"(.+?)"/);
@@ -100,7 +100,7 @@ export function getSteamAsepritePaths(): string[] {
       const content = readFileSync(file, "utf8");
       const libs = parseSteamLibraries(content);
 
-      const paths: string[] = [];
+      const paths = [];
 
       for (const lib of libs) {
         switch (process.platform) {
@@ -120,7 +120,8 @@ export function getSteamAsepritePaths(): string[] {
               )
             );
             break;
-          default: // linux
+          default: 
+            // Linux
             paths.push(
               path.join(
                 lib,

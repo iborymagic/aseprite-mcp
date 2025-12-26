@@ -25,7 +25,7 @@ export function createToolHandlers() {
       const sheetAbsPath = ensureSafePath(outputSheet, { createDirIfNeeded: true });
       const dataAbsPath = dataFile ? ensureSafePath(dataFile, { createDirIfNeeded: true }) : undefined;
       
-      const args: string[] = [
+      const args = [
         "--batch",
         `"${inputAbsPath}"`,
         "--sheet",
@@ -59,7 +59,7 @@ export function createToolHandlers() {
       const inputAbsPath = ensureSafePath(inputFile, { mustExist: true });
       const outputAbsPath = ensureSafePath(outputPattern, { createDirIfNeeded: true });
 
-      const args: string[] = [
+      const args = [
         "--batch",
         `"${inputAbsPath}"`,
         "--save-as",
@@ -83,12 +83,12 @@ export function createToolHandlers() {
     }    
   }
 
-  const aseprite_export_metadata: ToolCallback<typeof toolSchemas.aseprite_export_metadata> =   async ({ inputFile, dataFile, format }) => {
+  const aseprite_export_metadata: ToolCallback<typeof toolSchemas.aseprite_export_metadata> = async ({ inputFile, dataFile, format }) => {
     try {
       const inputAbsPath = ensureSafePath(inputFile, { mustExist: true });
       const dataAbsPath = ensureSafePath(dataFile, { createDirIfNeeded: true });
 
-      const args: string[] = [
+      const args = [
         "--batch",
         `"${inputAbsPath}"`,
         "--data",
