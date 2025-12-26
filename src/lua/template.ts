@@ -33,15 +33,38 @@ export const LUA_TEMPLATES: LuaTemplateMeta[] = [
     id: "recolor_palette",
     description: "Recolors the palette based on a mapping of from->to colors.",
     params: ["inputFile", "saveOutput", "mapping"],
-    optionalParams: [],
     scriptPath: path.join(__dirname, "templates", "recolor_palette.lua")
   },
   {
     id: "normalize_animation_speed",
     description: "Normalizes all frame durations to a single target duration (in seconds).",
     params: ["inputFile", "saveOutput", "targetDuration"],
-    optionalParams: [],
     scriptPath: path.join(__dirname, "templates", "normalize_animation_speed.lua")
+  },
+  {
+    id: "auto_crop_transparent",
+    description: "Automatically crops empty transparent borders of the sprite",
+    params: ["inputFile", "saveOutput"],
+    scriptPath: path.join(__dirname, "templates", "auto_crop_transparent.lua")
+  },
+  {
+    id: "merge_visible_layers",
+    description: "Merges currently visible layers and saves resulting flattened sprite",
+    params: ["inputFile", "saveOutput"],
+    scriptPath: path.join(__dirname, "templates", "merge_visible_layers.lua")
+  },
+  {
+    id: "export_layer_only",
+    description: "Exports only the specified layer to a flattened PNG",
+    params: ["inputFile", "layerName", "outputDir"],
+    scriptPath: path.join(__dirname, "templates", "export_layer_only.lua")
+  },
+  {
+    id: "export_tag_frames",
+    description: "Exports frames inside a specific animation tag to PNG files",
+    params: ["inputFile", "tag", "outputDir"],
+    optionalParams: ["filenamePrefix"],
+    scriptPath: path.join(__dirname, "templates", "export_tag_frames.lua")
   }
 ];
 
