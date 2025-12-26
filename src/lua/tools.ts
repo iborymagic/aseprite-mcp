@@ -38,6 +38,13 @@ export function createToolHandlers() {
     try {
       const result = await runLuaScript(template.scriptPath, params);
 
+      if (result.timedOut) {
+        return errorResult(
+          "aseprite_run_lua_template",
+          new Error(`Lua script timed out while executing template: ${templateId}`)
+        );
+      }
+
       return successResult("aseprite_run_lua_template", {
         command: result.command,
         templateId,
@@ -66,6 +73,13 @@ export function createToolHandlers() {
       }
 
       const result = await runLuaScript(luaFilePath, params);
+
+      if (result.timedOut) {
+        return errorResult(
+          "aseprite_run_lua_script",
+          new Error(`Lua script timed out while executing script: ${luaFilePath}`)
+        );
+      }  
 
       return successResult("aseprite_run_lua_script", {
         command: result.command,
