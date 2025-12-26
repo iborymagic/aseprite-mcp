@@ -1,16 +1,19 @@
 {
-  "name": "aseprite-mcp",
-  "version": "0.0.1",
+  "name": "@iborymagic/aseprite-mcp",
+  "version": "0.1.0",
   "description": "MCP server for using Aseprite API",
   "main": "index.js",
   "type": "module",
   "bin": {
     "aseprite-mcp": "./build/index.js"
   },
+  "files": [
+    "build"
+  ],
   "scripts": {
     "build": "tsc",
     "start": "node build/index.js",
-    "dev": "pnpm run build && pnpm run start",
+    "dev": "npm run build && npm run start",
     "test": "jest --runInBand --slient=false"
   },
   "dependencies": {
@@ -25,5 +28,12 @@
     "typescript": "^5.0.0"
   },
   "author": "iborymagic",
+  "repository": {
+  "type": "git",
+    "url": "https://github.com/iborymagic/aseprite-mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/iborymagic/aseprite-mcp/issues"
+  },
   "license": "MIT"
 }
