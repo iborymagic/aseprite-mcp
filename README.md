@@ -1,6 +1,7 @@
 # Aseprite-MCP
 This server automates Aseprite workflows using the Model Context Protocol (MCP).  
 It enables AI, chat assistants, and automation pipelines to directly execute Aseprite tasks such as sprite sheet export, frame extraction, and metadata output.  
+
 *Lua-based automation and high-level sprite/tile generation features are not included yet.  
 *Aseprite must be installed in order to use this MCP server.  
 

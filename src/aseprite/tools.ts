@@ -1,8 +1,8 @@
 import z from "zod";
-import { resolveAsepritePath } from "./aseprite/env.js";
-import { runAsepriteCommand } from "./aseprite/cli.js";
-import { errorResult, successResult } from "./util.js";
-import { ensureSafePath } from "./aseprite/path.js";
+import { resolveAsepritePath } from "./env.js";
+import { runAsepriteCommand } from "./cli.js";
+import { errorResult, successResult } from "../util.js";
+import { ensureSafePath } from "./path.js";
 import { ToolCallback } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { readFileSync } from "node:fs";
 

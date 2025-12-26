@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
-import { createToolHandlers } from "../src/tools.js";
+import { createToolHandlers } from "../src/aseprite/tools.js";
 
 const TEST_ASSET = "test/assets/sample.aseprite";
 
