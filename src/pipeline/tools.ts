@@ -192,10 +192,74 @@ export function createToolHandlers() {
     }
   }
 
+  const character_pipeline_build: ToolCallback<typeof toolSchemas.character_pipeline_build> = async ({ 
+    inputFile, 
+    tempOutput, 
+    exportDir, 
+    normalizeOption = { targetMs: 100, autoCrop: true }, 
+    exportOption = { sheetType: "packed", format: "json-hash" } 
+  }) => {
+    try {
+      const inputAbs = ensureSafePath(inputFile, { mustExist: true });
+  
+      const baseDir = path.dirname(inputAbs);
+      const baseName = path.basename(inputAbs, path.extname(inputAbs));
+  
+      const normalizedOutput =
+        tempOutput ??
+        path.join(baseDir, `${baseName}_normalized.aseprite`);
+  
+      const exportDirAbs = ensureSafePath(exportDir, { mustExist: false });
+  
+      const analyzeResponse = await character_pipeline_analyze({ inputFile: inputAbs }, {} as any);
+      const analyzeContent = analyzeResponse.content[0] as { text: string };
+      const analyzeParsed = JSON.parse(analyzeContent.text);
+      if (!analyzeParsed.success) {
+        return errorResult("character_pipeline_build", analyzeParsed.error);
+      }
+  
+      const normalizeResponse = await character_pipeline_normalize({
+        inputFile: inputAbs,
+        saveOutput: normalizedOutput,
+        targetMs: normalizeOption.targetMs,
+        autoCrop: normalizeOption.autoCrop,
+      }, {} as any);
+      const normalizeContent = normalizeResponse.content[0] as { text: string };
+      const normalizeParsed = JSON.parse(normalizeContent.text);
+      if (!normalizeParsed.success) {
+        return errorResult("character_pipeline_build", normalizeParsed.error);
+      }
+      
+      const exportResponse = await character_pipeline_export({
+        inputFile: normalizedOutput,
+        exportDir: exportDirAbs,
+        sheetType: exportOption.sheetType,
+        format: exportOption.format,
+      }, {} as any);
+      const exportContent = exportResponse.content[0] as { text: string };
+      const exportParsed = JSON.parse(exportContent.text);
+      if (!exportParsed.success) {
+        return errorResult("character_pipeline_build", exportParsed.error);
+      }
+  
+      return successResult("character_pipeline_build", {
+        inputFile: inputAbs,
+        normalizedFile: normalizedOutput,
+        exportDir: exportDirAbs,
+        analyze: analyzeParsed.result,
+        normalize: normalizeParsed.result,
+        export: exportParsed.result,
+      });
+    } catch (err: unknown) {
+      return errorResult("character_pipeline_build", `Character pipeline failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
   return {
     character_pipeline_analyze,
     character_pipeline_normalize,
-    character_pipeline_export
+    character_pipeline_export,
+    character_pipeline_build,
   };
 }
 
@@ -215,6 +279,19 @@ export function createToolSchemas() {
       exportDir: z.string(),
       sheetType: z.enum(["packed", "rows"]).optional(),
       format: z.enum(["json-hash", "json-array"]).optional(),
+    }),
+    character_pipeline_build: z.object({
+      inputFile: z.string(),
+      tempOutput: z.string().optional(),
+      exportDir: z.string(),
+      normalizeOption: z.object({
+        targetMs: z.number().optional(),
+        autoCrop: z.boolean().optional(),
+      }).optional(),
+      exportOption: z.object({
+        sheetType: z.enum(["packed", "rows"]).optional(),
+        format: z.enum(["json-hash", "json-array"]).optional(),
+      }).optional(),
     }),
     character_pipeline_analyze_result: z.object({
       command: z.string(),
@@ -243,6 +320,14 @@ export function createToolSchemas() {
         json: z.string(),
         frames: z.number(),
       })),
+    }),
+    character_pipeline_build_result: z.object({
+      inputFile: z.string(),
+      normalizedFile: z.string(),
+      exportDir: z.string(),
+      analyze: z.any(),
+      normalize: z.any(),
+      export: z.any(),
     }),
   };
 }

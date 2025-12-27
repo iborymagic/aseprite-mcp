@@ -118,6 +118,16 @@ server.registerTool(
   characterPipelineToolHandlers.character_pipeline_export
 );
 
+server.registerTool(
+  "character_pipeline_build",
+  {
+    description: "Build a character sprite",
+    inputSchema: characterPipelineToolSchemas.character_pipeline_build,
+    outputSchema: characterPipelineToolSchemas.character_pipeline_build_result,
+  },
+  characterPipelineToolHandlers.character_pipeline_build
+);
+
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);

@@ -77,6 +77,12 @@ export const LUA_TEMPLATES: LuaTemplateMeta[] = [
     params: ["inputFile", "exportDir", "sheetType", "format"],
     scriptPath: path.join(__dirname, "templates", "character_export.lua")
   },
+  {
+    id: "character_build",
+    description: "Builds a character sprite",
+    params: ["inputFile", "tempOutput", "exportDir", "normalizeOption", "exportOption"],
+    scriptPath: path.join(__dirname, "templates", "character_build.lua")
+  }
 ];
 
 export function findLuaTemplate(id: string): LuaTemplateMeta | undefined {

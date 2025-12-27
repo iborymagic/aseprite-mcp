@@ -61,7 +61,7 @@ describe("Character pipeline", () => {
     const result = await toolHandlers.character_pipeline_export(
       {
         inputFile: TEST_CHARACTER,
-        exportDir: path.join(__dirname, "assets", "character_export"),
+        exportDir: "test/assets/character_export",
       },
       {} as any
     );
@@ -77,4 +77,24 @@ describe("Character pipeline", () => {
     expect(existsSync(generated[0].json)).toBe(true);
   });
   
+  it("should run full character build pipeline", async () => {
+    const result = await toolHandlers.character_pipeline_build(
+      {
+        inputFile: TEST_CHARACTER,
+        exportDir: "test/assets/char_build",
+      },
+      {} as any
+    );
+  
+    const resultContent = result.content[0] as { text: string };
+    const parsed = JSON.parse(resultContent.text);
+  
+    expectBaseResult(parsed);
+    expect(parsed.success).toBe(true);
+    expect(existsSync(parsed.result.normalizedFile)).toBe(true);
+    expect(existsSync(parsed.result.exportDir)).toBe(true);
+    expect(parsed.result.analyze.analysis.sprite.frames).toBeGreaterThan(0);
+    expect(existsSync(parsed.result.normalize.outputFile)).toBe(true);
+    expect(parsed.result.export.generated.length).toBeGreaterThan(0);
+  });
 });
