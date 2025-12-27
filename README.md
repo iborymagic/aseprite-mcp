@@ -21,6 +21,10 @@ Adds deeper control using Aseprite Lua scripting, enabling safe AI-driven editin
   - `export_tag_frames`: Palette recoloring
   - `recolor_palette`: Normalizing animation speed
   - `normalize_animation_speed`: Exporting only specific animation tags
+  - `auto_crop_transparent`: Removing empty transparent borders around the sprite
+  - `export_layer_only`: Exporting only a specific layer as a flattened PNG image
+  - `export_tag_frames`: Exporting all frames within a specific animation tag as individual PNG files
+  - `merge_visible_layers`: Merging all currently visible layers into a single layer
 - `aseprite_run_lua`: Executes a raw Lua script (advanced / unsafe)
 
 ## How to use
