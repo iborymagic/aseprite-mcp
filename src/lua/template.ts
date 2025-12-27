@@ -1,7 +1,5 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { ensureSafePath } from "../aseprite/path.js";
-import { AsepriteCommandResult, runAsepriteCommand } from "../aseprite/cli.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -65,7 +63,20 @@ export const LUA_TEMPLATES: LuaTemplateMeta[] = [
     params: ["inputFile", "tag", "outputDir"],
     optionalParams: ["filenamePrefix"],
     scriptPath: path.join(__dirname, "templates", "export_tag_frames.lua")
-  }
+  },
+  {
+    id: "character_normalize",
+    description: "Normalizes frame durations inside all tags to a single target duration (in seconds).",
+    params: ["inputFile", "saveOutput", "targetMs"],
+    optionalParams: ["autoCrop"],
+    scriptPath: path.join(__dirname, "templates", "character_normalize.lua")
+  },
+  {
+    id: "character_export",
+    description: "Exports a character sprite",
+    params: ["inputFile", "exportDir", "sheetType", "format"],
+    scriptPath: path.join(__dirname, "templates", "character_export.lua")
+  },
 ];
 
 export function findLuaTemplate(id: string): LuaTemplateMeta | undefined {

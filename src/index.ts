@@ -3,6 +3,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { createToolHandlers as createAsepriteToolHandlers, createToolSchemas as createAsepriteToolSchemas } from "./aseprite/tools.js";
 import { createToolHandlers as createLuaToolHandlers, createToolSchemas as createLuaToolSchemas } from "./lua/tools.js";
+import { createToolHandlers as createCharacterPipelineToolHandlers, createToolSchemas as createCharacterPipelineToolSchemas } from "./pipeline/tools.js";
 
 const server = new McpServer({
   name: "aseprite-mcp",
@@ -11,8 +12,11 @@ const server = new McpServer({
 
 const asepriteToolSchemas = createAsepriteToolSchemas();
 const luaToolSchemas = createLuaToolSchemas();
+const characterPipelineToolSchemas = createCharacterPipelineToolSchemas();
+
 const asepriteToolHandlers = createAsepriteToolHandlers();
 const luaToolHandlers = createLuaToolHandlers();
+const characterPipelineToolHandlers = createCharacterPipelineToolHandlers();
 
 server.registerTool(
   "aseprite_check_environment",
@@ -82,6 +86,36 @@ server.registerTool(
     outputSchema: luaToolSchemas.lua_output_result,
   },
   luaToolHandlers.aseprite_run_lua_script
+);
+
+server.registerTool(
+  "character_pipeline_analyze",
+  {
+    description: "Analyze a character sprite",
+    inputSchema: characterPipelineToolSchemas.character_pipeline_analyze,
+    outputSchema: characterPipelineToolSchemas.character_pipeline_analyze_result,
+  },
+  characterPipelineToolHandlers.character_pipeline_analyze
+);
+
+server.registerTool(
+  "character_pipeline_normalize",
+  {
+    description: "Normalize a character sprite",
+    inputSchema: characterPipelineToolSchemas.character_pipeline_normalize,
+    outputSchema: characterPipelineToolSchemas.character_pipeline_normalize_result,
+  },
+  characterPipelineToolHandlers.character_pipeline_normalize
+);
+
+server.registerTool(
+  "character_pipeline_export",
+  {
+    description: "Export a character sprite",
+    inputSchema: characterPipelineToolSchemas.character_pipeline_export,
+    outputSchema: characterPipelineToolSchemas.character_pipeline_export_result,
+  },
+  characterPipelineToolHandlers.character_pipeline_export
 );
 
 async function main() {

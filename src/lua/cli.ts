@@ -1,7 +1,7 @@
 import { AsepriteCommandResult, runAsepriteCommand } from "../aseprite/cli.js";
 import { ensureSafePath } from "../aseprite/path.js";
 
-export async function runLuaScript(
+export async function runLuaScriptFile(
   scriptPath: string,
   params: Record<string, unknown>
 ): Promise<AsepriteCommandResult> {

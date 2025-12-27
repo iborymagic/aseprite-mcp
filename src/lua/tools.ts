@@ -1,6 +1,6 @@
 import { errorResult, successResult } from "../util.js";
 import { findLuaTemplate, LUA_TEMPLATES } from "./template.js";
-import { runLuaScript } from "./cli.js";
+import { runLuaScriptFile } from "./cli.js";
 import { ensureSafePath } from "../aseprite/path.js";
 import path from "node:path";
 import z from "zod";
@@ -37,7 +37,7 @@ export function createToolHandlers() {
     }
 
     try {
-      const result = await runLuaScript(template.scriptPath, params);
+      const result = await runLuaScriptFile(template.scriptPath, params);
 
       if (result.timedOut) {
         return errorResult(
@@ -90,7 +90,7 @@ export function createToolHandlers() {
         luaFilePath = tempPath;
       }
 
-      const result = await runLuaScript(luaFilePath, params);
+      const result = await runLuaScriptFile(luaFilePath, params);
 
       if (result.timedOut) {
         return errorResult(
