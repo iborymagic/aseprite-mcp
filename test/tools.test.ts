@@ -4,7 +4,6 @@ import { createToolHandlers as createLuaToolHandlers } from "../src/lua/tools.js
 import path from "node:path";
 import { expect, describe, it, beforeAll } from "vitest";
 
-const LUA_TEMPLATE_DIR = path.join(__dirname, "..", "src", "lua", "templates");
 const TEST_ASSET = path.join(__dirname, "assets", "sample.aseprite");
 const LAYER_TEST_ASSET = path.join(__dirname, "assets", "layer_sample.aseprite");
 const TAG_TEST_ASSET = path.join(__dirname, "assets", "tag_sample.aseprite");
@@ -83,6 +82,60 @@ describe("Aseprite MCP Lua templates", () => {
     mkdirSync(LUA_OUTPUT, { recursive: true });
   });
 
+  it("should remove layer by name", async () => {
+    const result = await luaToolHandlers.aseprite_run_lua_template({
+      templateId: "remove_layer_by_name",
+      params: {
+        inputFile: LAYER_TEST_ASSET,
+        layerName: "shadow",
+        saveOutput: `${LUA_OUTPUT}/removed.aseprite`
+      }
+    }, {} as any);
+
+    const resultContent = result.content[0] as { text: string };
+    const parsedResult = JSON.parse(resultContent.text);
+
+    expectBaseResult(parsedResult);
+    expect(parsedResult.success).toBe(true);
+    expect(existsSync(`${LUA_OUTPUT}/removed.aseprite`)).toBe(true);
+  });
+
+  it("should recolor palette", async () => {
+    const result = await luaToolHandlers.aseprite_run_lua_template({
+      templateId: "recolor_palette",
+      params: {
+        inputFile: LAYER_TEST_ASSET,
+        saveOutput: `${LUA_OUTPUT}/recolored.aseprite`,
+        mapping: "000000:000000;FFFFFF:FFFFFF;FF0000:00FF00"
+      }
+    }, {} as any);
+
+    const resultContent = result.content[0] as { text: string };
+    const parsedResult = JSON.parse(resultContent.text);
+
+    expectBaseResult(parsedResult);
+    expect(parsedResult.success).toBe(true);
+    expect(existsSync(`${LUA_OUTPUT}/recolored.aseprite`)).toBe(true);
+  });
+
+  it("should normalize animation speed", async () => {
+    const result = await luaToolHandlers.aseprite_run_lua_template({
+      templateId: "normalize_animation_speed",
+      params: {
+        inputFile: TEST_ASSET,
+        saveOutput: `${LUA_OUTPUT}/normalized.aseprite`,
+        targetDuration: 0.1
+      }
+    }, {} as any);
+
+    const resultContent = result.content[0] as { text: string };
+    const parsedResult = JSON.parse(resultContent.text);
+
+    expectBaseResult(parsedResult);
+    expect(parsedResult.success).toBe(true);
+    expect(existsSync(`${LUA_OUTPUT}/normalized.aseprite`)).toBe(true);
+  });
+  
   it("should auto crop transparent sprite", async () => {
     const result = await luaToolHandlers.aseprite_run_lua_template({
       templateId: "auto_crop_transparent",

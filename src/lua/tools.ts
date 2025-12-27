@@ -42,18 +42,35 @@ export function createToolHandlers() {
       if (result.timedOut) {
         return errorResult(
           "aseprite_run_lua_template",
-          new Error(`Lua script timed out while executing template: ${templateId}`)
+          `Lua script timed out while executing template: ${templateId}`
+        );
+      }
+
+      const stderrTrimmed = result.stderr.trim();
+      const stdoutTrimmed = result.stdout.trim();
+      
+      if (stderrTrimmed && stderrTrimmed.includes("ERROR:")) {
+        return errorResult(
+          "aseprite_run_lua_template",
+          `Script execution failed: ${stderrTrimmed}`
+        );
+      }
+
+      if (stdoutTrimmed && stdoutTrimmed.includes("ERROR:")) {
+        return errorResult(
+          "aseprite_run_lua_template",
+          `Script execution failed: ${stdoutTrimmed}`
         );
       }
 
       return successResult("aseprite_run_lua_template", {
         command: result.command,
         templateId,
-        stdout: result.stdout.trim(),
-        stderr: result.stderr.trim()
+        stdout: stdoutTrimmed,
+        stderr: stderrTrimmed
       });
     } catch (err: unknown) {
-      return errorResult("aseprite_run_lua_template", new Error(`Execution failed: ${err instanceof Error ? err.message : String(err)}`));
+      return errorResult("aseprite_run_lua_template", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
     }
   };
 
@@ -78,18 +95,35 @@ export function createToolHandlers() {
       if (result.timedOut) {
         return errorResult(
           "aseprite_run_lua_script",
-          new Error(`Lua script timed out while executing script: ${luaFilePath}`)
+          `Lua script timed out while executing script: ${luaFilePath}`
         );
       }  
 
+      const stderrTrimmed = result.stderr.trim();
+      const stdoutTrimmed = result.stdout.trim();
+      
+      if (stderrTrimmed && stderrTrimmed.includes("ERROR:")) {
+        return errorResult(
+          "aseprite_run_lua_script",
+          `Script execution failed: ${stderrTrimmed}`
+        );
+      }
+
+      if (stdoutTrimmed && stdoutTrimmed.includes("ERROR:")) {
+        return errorResult(
+          "aseprite_run_lua_script",
+          `Script execution failed: ${stdoutTrimmed}`
+        );
+      }
+
       return successResult("aseprite_run_lua_script", {
         command: result.command,
-        stdout: result.stdout.trim(),
-        stderr: result.stderr.trim()
+        stdout: stdoutTrimmed,
+        stderr: stderrTrimmed
       });
 
     } catch (err: unknown) {
-      return errorResult("aseprite_run_lua_script", new Error(`Execution failed: ${err instanceof Error ? err.message : String(err)}`));
+      return errorResult("aseprite_run_lua_script", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
     }
   };
 

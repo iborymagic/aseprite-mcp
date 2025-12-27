@@ -14,7 +14,7 @@ export async function runLuaScript(
   
   for (const [key, value] of Object.entries(params)) {
     if (key === "inputFile" || value == null) continue;
-    args.push("--script-param", `${key}=${value}`);
+    args.push("--script-param", `${key}="${String(value)}"`);
   }
   
   args.push("--script", `"${scriptPath}"`);
