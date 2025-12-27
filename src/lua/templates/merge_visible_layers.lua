@@ -1,17 +1,22 @@
 -- Merges all visible layers into a single layer and saves the result.
 -- Params:
---   inputFile   : string (already opened in Aseprite CLI or app.activeSprite)
 --   saveOutput  : string
 
 local p = app.params
-local sprite = app.open(p.inputFile)
 
-if not sprite then
-  print("ERROR: Failed to open sprite")
+if not p or not p.saveOutput then
+  print("ERROR: saveOutput is required")
   return
 end
 
-app.command.MergeVisibleLayers()
+local sprite = app.activeSprite
+
+if not sprite then
+  print("ERROR: No active sprite")
+  return
+end
+
+app.command.FlattenLayers()
 
 sprite:saveAs(p.saveOutput)
 

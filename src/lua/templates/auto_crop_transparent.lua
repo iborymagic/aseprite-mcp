@@ -1,13 +1,17 @@
 -- Auto-crops a sprite and saves the result.
 -- Params:
---   inputFile   : string (already opened in Aseprite CLI or app.activeSprite)
 --   saveOutput  : string
 
 local p = app.params
-local sprite = app.open(p.inputFile)
+if not p or not p.saveOutput then
+  print("ERROR: saveOutput is required")
+  return
+end
+
+local sprite = app.activeSprite
 
 if not sprite then
-  print("ERROR: Failed to open sprite")
+  print("ERROR: No active sprite")
   return
 end
 

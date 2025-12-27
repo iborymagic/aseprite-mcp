@@ -1,7 +1,14 @@
-import { existsSync, readFileSync } from "node:fs";
-import { createToolHandlers } from "../src/aseprite/tools.js";
+import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
+import { createToolHandlers as createAsepriteToolHandlers } from "../src/aseprite/tools.js";
+import { createToolHandlers as createLuaToolHandlers } from "../src/lua/tools.js";
+import path from "node:path";
+import { expect, describe, it, beforeAll } from "vitest";
 
-const TEST_ASSET = "test/assets/sample.aseprite";
+const LUA_TEMPLATE_DIR = path.join(__dirname, "..", "src", "lua", "templates");
+const TEST_ASSET = path.join(__dirname, "assets", "sample.aseprite");
+const LAYER_TEST_ASSET = path.join(__dirname, "assets", "layer_sample.aseprite");
+const TAG_TEST_ASSET = path.join(__dirname, "assets", "tag_sample.aseprite");
+const LUA_OUTPUT = path.join(__dirname, "assets", "lua_output");
 
 function expectBaseResult(result: any) {
   expect(result).toBeDefined();
@@ -15,11 +22,12 @@ function expectBaseResult(result: any) {
   }
 }
 
-const toolHandlers = createToolHandlers();
+const asepriteToolHandlers = createAsepriteToolHandlers();
+const luaToolHandlers = createLuaToolHandlers();
 
 describe("Aseprite MCP tools", () => {
   it("should check environment", async () => {
-    const result = await toolHandlers.aseprite_check_environment();
+    const result = await asepriteToolHandlers.aseprite_check_environment();
     const resultContent = result.content[0] as { text: string };
     const parsedResult = JSON.parse(resultContent.text);
 
@@ -28,7 +36,7 @@ describe("Aseprite MCP tools", () => {
   });
 
   it("should export sheet", async () => {
-    const result = await toolHandlers.aseprite_export_sheet({ 
+    const result = await asepriteToolHandlers.aseprite_export_sheet({ 
       inputFile: TEST_ASSET, 
       outputSheet: "test/assets/test.png",
       sheetType: "packed"
@@ -42,7 +50,7 @@ describe("Aseprite MCP tools", () => {
   });
 
   it("should export frames", async () => {
-    const result = await toolHandlers.aseprite_export_frames({ 
+    const result = await asepriteToolHandlers.aseprite_export_frames({ 
       inputFile: TEST_ASSET, 
       outputPattern: "test/assets/test_frames/frame_{frame}.png" 
     }, {} as any);
@@ -55,7 +63,7 @@ describe("Aseprite MCP tools", () => {
   });
 
   it("should export metadata", async () => {
-    const result = await toolHandlers.aseprite_export_metadata({ 
+    const result = await asepriteToolHandlers.aseprite_export_metadata({ 
       inputFile: TEST_ASSET, 
       dataFile: "test/assets/test.json" 
     }, {} as any);
@@ -66,5 +74,85 @@ describe("Aseprite MCP tools", () => {
     expect(parsedResult.success).toBe(true);
     const meta = JSON.parse(readFileSync("test/assets/test.json", "utf8"));
     expect(meta).toHaveProperty("frames");
+  });
+});
+
+describe("Aseprite MCP Lua templates", () => {
+  beforeAll(() => {
+    if (existsSync(LUA_OUTPUT)) rmSync(LUA_OUTPUT, { recursive: true, force: true });
+    mkdirSync(LUA_OUTPUT, { recursive: true });
+  });
+
+  it("should auto crop transparent sprite", async () => {
+    const result = await luaToolHandlers.aseprite_run_lua_template({
+      templateId: "auto_crop_transparent",
+      params: {
+        inputFile: TEST_ASSET,
+        saveOutput: `${LUA_OUTPUT}/cropped.aseprite`
+      }
+    }, {} as any);
+
+    const resultContent = result.content[0] as { text: string };
+    const parsedResult = JSON.parse(resultContent.text);
+
+    expectBaseResult(parsedResult);
+    expect(parsedResult.success).toBe(true);
+    expect(existsSync(`${LUA_OUTPUT}/cropped.aseprite`)).toBe(true);
+  });
+
+  it("should merge visible layers", async () => {
+    const result = await luaToolHandlers.aseprite_run_lua_template({
+      templateId: "merge_visible_layers",
+      params: {
+        inputFile: LAYER_TEST_ASSET,
+        saveOutput: `${LUA_OUTPUT}/merged.aseprite`
+      }
+    }, {} as any);
+
+    const resultContent = result.content[0] as { text: string };
+    const parsedResult = JSON.parse(resultContent.text);
+
+    expectBaseResult(parsedResult);
+    expect(parsedResult.success).toBe(true);
+    expect(existsSync(`${LUA_OUTPUT}/merged.aseprite`)).toBe(true);
+  });
+
+  it("should export only specified layer", async () => {
+    const result = await luaToolHandlers.aseprite_run_lua_template({
+      templateId: "export_layer_only",
+      params: {
+        inputFile: LAYER_TEST_ASSET,
+        layerName: "shadow",
+        outputDir: LUA_OUTPUT
+      }
+    }, {} as any);
+
+    const resultContent = result.content[0] as { text: string };
+    const parsedResult = JSON.parse(resultContent.text);
+
+    expectBaseResult(parsedResult);
+    expect(parsedResult.success).toBe(true);
+    expect(existsSync(`${LUA_OUTPUT}/shadow.png`)).toBe(true);
+  });
+
+  it("should export frames inside a tag", async () => {
+    const result = await luaToolHandlers.aseprite_run_lua_template({
+      templateId: "export_tag_frames",
+      params: {
+        inputFile: TAG_TEST_ASSET,
+        tag: "walk",
+        outputDir: `${LUA_OUTPUT}/walk`,
+        filenamePrefix: "walk"
+      }
+    }, {} as any);
+
+    const resultContent = result.content[0] as { text: string };
+    const parsedResult = JSON.parse(resultContent.text);
+
+    expectBaseResult(parsedResult);
+    expect(parsedResult.success).toBe(true);
+
+    // There should be at least one frame
+    expect(existsSync(`${LUA_OUTPUT}/walk/walk-0001.png`)).toBe(true);
   });
 });

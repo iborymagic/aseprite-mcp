@@ -1,14 +1,18 @@
 -- Exports a single layer as a PNG file.
 -- Params:
---   inputFile   : string (already opened in Aseprite CLI or app.activeSprite)
 --   layerName   : string
 --   outputDir   : string (must exist or will be created by Node side)
 
 local p = app.params
-local sprite = app.open(p.inputFile)
+if not p or not p.layerName or not p.outputDir then
+  print("ERROR: layerName and outputDir are required")
+  return
+end
+
+local sprite = app.activeSprite
 
 if not sprite then
-  print("ERROR: Failed to open sprite")
+  print("ERROR: No active sprite")
   return
 end
 

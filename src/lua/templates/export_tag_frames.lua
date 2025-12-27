@@ -1,21 +1,20 @@
 -- Exports only frames inside a specific tag as individual PNG files.
 -- Params:
---   inputFile      : string (already opened in Aseprite CLI or app.activeSprite)
 --   tag            : string
 --   outputDir      : string (must exist or will be created by Node side)
 --   filenamePrefix : string (optional, default "frame")
 
 local p = app.params
 
-if not p.inputFile then
-  print("ERROR: inputFile is required")
+if not p or not p.outputDir then
+  print("ERROR: outputDir is required")
   return
 end
 
-local sprite = app.open(p.inputFile)
+local sprite = app.activeSprite
 
 if not sprite then
-  print("ERROR: Failed to open sprite")
+  print("ERROR: No active sprite")
   return
 end
 
@@ -45,13 +44,23 @@ local startFrame = tag.fromFrame.frameNumber
 local endFrame = tag.toFrame.frameNumber
 
 for frameNumber = startFrame, endFrame do
-  sprite.frame = frameNumber
-
+  local frameIndex = frameNumber - 1
+  
+  local newSprite = Sprite(sprite.spec)
+  for i, layer in ipairs(sprite.layers) do
+    if i > 1 then
+      newSprite:newLayer(layer.name)
+    end
+    
+    local cel = layer:cel(frameIndex)
+    if cel then
+      newSprite:newCel(newSprite.layers[i], newSprite.frames[1], cel.image, cel.position)
+    end
+  end
+  
   local filename = string.format("%s/%s-%04d.png", outputDir, prefix, frameNumber)
-  app.command.ExportSprite{
-    ui = false,
-    filename = filename
-  }
+  newSprite:saveAs(filename)
+  newSprite:close()
 end
 
 sprite:close()
