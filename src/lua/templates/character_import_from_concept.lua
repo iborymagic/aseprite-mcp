@@ -90,7 +90,7 @@ if not okSave then
   return
 end
 
-print("Saved aseprite file to: " .. p.asepriteOutput)
+print("Saved aseprite file to: " .. p.outputFile)
 
 sprite:close()
 print("character_import_from_concept script executed successfully")
