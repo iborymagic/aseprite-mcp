@@ -147,11 +147,5 @@ export function createToolSchemas() {
       dataFile: z.string(),
       format: z.string().optional(),
     }),
-    aseprite_output_result: z.object({
-      content: z.array(z.object({
-        type: z.literal("text"),
-        text: z.string(),
-      })),
-    }),
   };
 }

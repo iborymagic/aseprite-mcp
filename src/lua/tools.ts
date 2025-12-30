@@ -149,13 +149,5 @@ export function createToolSchemas() {
       .refine(v => !!v.scriptPath || !!v.scriptContent, {
         message: "Either scriptPath or scriptContent is required."
       }),
-    lua_output_result: z.object({
-      content: z.array(
-        z.object({
-          type: z.literal("text"),
-          text: z.string()
-        })
-      )
-    })
   };
 }

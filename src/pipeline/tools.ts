@@ -293,41 +293,5 @@ export function createToolSchemas() {
         format: z.enum(["json-hash", "json-array"]).optional(),
       }).optional(),
     }),
-    character_pipeline_analyze_result: z.object({
-      command: z.string(),
-      inputFile: z.string(),
-      analysis: z.any(),
-      stdout: z.string(),
-      stderr: z.string(),
-    }),
-    character_pipeline_normalize_result: z.object({
-      command: z.string(),
-      inputFile: z.string(),
-      outputFile: z.string(),
-      targetMs: z.number(),
-      autoCrop: z.boolean(),
-      stdout: z.string().optional(),
-      stderr: z.string().optional(),
-    }),
-    character_pipeline_export_result: z.object({
-      inputFile: z.string(),
-      exportDir: z.string(),
-      sheetType: z.enum(["packed", "rows"]),
-      format: z.enum(["json-hash", "json-array"]),
-      generated: z.array(z.object({
-        tag: z.string(),
-        png: z.string(),
-        json: z.string(),
-        frames: z.number(),
-      })),
-    }),
-    character_pipeline_build_result: z.object({
-      inputFile: z.string(),
-      normalizedFile: z.string(),
-      exportDir: z.string(),
-      analyze: z.any(),
-      normalize: z.any(),
-      export: z.any(),
-    }),
   };
 }
