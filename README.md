@@ -40,11 +40,11 @@ npm run build
 npx aseprite-mcp
 ```
 
-### Using with ChatGPT
-Add the following to your mcp.json
+### Using with Claude Desktop
+Add the following to your claude_desktop_config.json
 ```json
 {
-  "servers": {
+  "mcpServers": {
     "aseprite-mcp": {
       "command": "npx",
       "args": ["-y", "aseprite-mcp"]
@@ -53,19 +53,8 @@ Add the following to your mcp.json
 }
 ```
 
-### Using with Claude
-Add the following to your servers.json
-```json
-{
-  "aseprite-mcp": {
-    "command": "npx",
-    "args": ["-y", "aseprite-mcp"]
-  }
-}
-```
-
 ### Using with Cursor
-Add the following to your .cursor.json
+Add the following to your mcp.json
 ```json
 {
   "mcpServers": {
