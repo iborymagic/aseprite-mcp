@@ -11,18 +11,20 @@ import { createToolHandlers as createPipelineToolHandlers } from "../pipeline/to
 const toolSchemas = createToolSchemas();
 
 export function createToolHandlers() {  
-  const character_generate_concept: ToolCallback<typeof toolSchemas.character_generate_concept> = async ({
-    params: {
-      prompt,
-      workspaceDir,
-      fileName = "concept.png",
-      width = 256,
-      height = 256,
-      seed,
-      stylePreset = "pixel_art"
-    },
-    generator
-  }) => {
+  const character_generate_concept = async (
+    {
+      params: {
+        prompt,
+        workspaceDir,
+        fileName = "concept.png",
+        width = 256,
+        height = 256,
+        seed,
+        stylePreset = "pixel_art"
+      }
+    }: { params: z.infer<typeof toolSchemas.character_generate_concept>["params"] },
+    generator: ImageGenerator
+  ) => {
     try {
       const workspaceAbs = ensureSafePath(workspaceDir, { mustExist: false });
       await fs.mkdir(workspaceAbs, { recursive: true });
@@ -74,8 +76,7 @@ export function createToolHandlers() {
   
       const luaScriptPath = path.join(
         process.cwd(),
-        "lua-templates",
-        "character_import_from_concept.lua"
+        "src/lua/templates/character_import_from_concept.lua"
       );
   
       const result = await runLuaScriptFile(luaScriptPath, {
@@ -107,14 +108,16 @@ export function createToolHandlers() {
     }
   }
 
-  const character_generate_full: ToolCallback<typeof toolSchemas.character_generate_full> = async ({
-    params: {
-      prompt,
-      config,
-      paths
-    },
-    generator
-  }) => {
+  const character_generate_full = async (
+    {
+      params: {
+        prompt,
+        config,
+        paths
+      }
+    }: { params: z.infer<typeof toolSchemas.character_generate_full>["params"] },
+    generator: ImageGenerator
+  ) => {
     try {
       const spriteSize = config?.spriteSize ?? 32;
       const animations =
@@ -156,9 +159,8 @@ export function createToolHandlers() {
             height: spriteSize * 8,
             seed,
             stylePreset: "pixel_art"
-          },
-          generator
-        }, {} as any);
+          }
+        }, generator);
   
       const conceptContent = conceptResult.content?.[0] as any;
       const conceptJson = conceptContent
@@ -199,7 +201,7 @@ export function createToolHandlers() {
         });
       }
   
-      const asepriteFile = importJson.result.asepriteFile as string;
+      const asepriteFile = importJson.result.outputFile as string;
   
       const pipelineToolHandlers = createPipelineToolHandlers();
       const buildResult = await pipelineToolHandlers.character_pipeline_build({
@@ -237,16 +239,10 @@ export function createToolHandlers() {
 
   return {
     character_generate_concept: async (params: any, generator: ImageGenerator) =>
-      character_generate_concept({
-        params,
-        generator
-      }, {} as any),
+      character_generate_concept(params, generator),
     character_import_from_concept,
     character_generate_full: async (params: any, generator: ImageGenerator) =>
-      character_generate_full({
-        params,
-        generator
-      }, {} as any),
+      character_generate_full(params, generator),
   };
 }
 
@@ -262,7 +258,6 @@ export function createToolSchemas() {
         seed: z.number().optional(),
         stylePreset: z.string().optional(),
       }),
-      generator: z.custom<ImageGenerator>(),
     }),
     character_import_from_concept: z.object({
       params: z.object({
@@ -286,7 +281,6 @@ export function createToolSchemas() {
           name: z.string().optional(),
         }),
       }),
-      generator: z.custom<ImageGenerator>(),
     }),
   };
 }

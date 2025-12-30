@@ -75,7 +75,10 @@ export function createToolHandlers() {
       const targetDuration = targetMs ?? 100;
       const autoCropEnabled = autoCrop ?? true;
   
-      const result = await runLuaScriptFile(path.join(__dirname, "../lua/templates/character_normalize.lua"), {
+      const result = await runLuaScriptFile(path.join(
+        process.cwd(),
+        "src/lua/templates/character_normalize.lua"
+      ), {
         inputFile: inputAbs,
         saveOutput: outputAbs,
         targetMs: targetDuration,
