@@ -2,8 +2,8 @@
 This server automates Aseprite workflows using the Model Context Protocol (MCP).  
 It enables AI, chat assistants, and automation pipelines to directly execute Aseprite tasks such as sprite sheet export, frame extraction, and metadata output.
 
-*Lua-based automation and high-level sprite/tile generation features are not included yet.  
 *Aseprite must be installed in order to use this MCP server.  
+*Currently, only character creation is possible, and not with images created through Aseprite.
 
 ## Features Overview
 ### V1 - Export/Utility
@@ -18,14 +18,26 @@ Adds deeper control using Aseprite Lua scripting, enabling safe AI-driven editin
 - `aseprite_list_lua_templates`: Lists available Lua templates
 - `aseprite_run_lua_template`: Runs a predefined safe Lua automation(templates)
   - `remove_layer_by_name`: Removing specific layers
-  - `export_tag_frames`: Palette recoloring
-  - `recolor_palette`: Normalizing animation speed
-  - `normalize_animation_speed`: Exporting only specific animation tags
+  - `recolor_palette`: Palette recoloring
+  - `normalize_animation_speed`: Normalizing animation speed
   - `auto_crop_transparent`: Removing empty transparent borders around the sprite
   - `export_layer_only`: Exporting only a specific layer as a flattened PNG image
   - `export_tag_frames`: Exporting all frames within a specific animation tag as individual PNG files
   - `merge_visible_layers`: Merging all currently visible layers into a single layer
 - `aseprite_run_lua`: Executes a raw Lua script (advanced / unsafe)
+
+### V3 - Image Generation
+(+ Character Pipeline)
+- Adds connection with LLM and Image Generation AI, enabling import/export image in Aseprite.
+- Only available on Character Generation
+- `character_generate_concept`: Generating concept image using Generative AI
+- `character_import_from_concept`: Importing character concept from concept image
+- `character_generate_full`: Execute whole character generating pipeline
+  - `character_pipeline_analyze`: Analyze character concept image
+  - `character_pipeline_normalize`: Normalize your animations with fixed frames, crops, tags, etc.
+  - `character_pipeline_export`: Export animation in png + json format
+
+*You can change Image Generation AI by implementing ImageGenerator class in image-generator.ts
 
 ## How to use
 1) Run directly with npx
