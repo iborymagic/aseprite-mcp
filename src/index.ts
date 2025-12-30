@@ -5,6 +5,7 @@ import { createToolHandlers as createAsepriteToolHandlers, createToolSchemas as 
 import { createToolHandlers as createLuaToolHandlers, createToolSchemas as createLuaToolSchemas } from "./lua/tools.js";
 import { createToolHandlers as createCharacterPipelineToolHandlers, createToolSchemas as createCharacterPipelineToolSchemas } from "./pipeline/tools.js";
 import { createToolHandlers as createGeneratorToolHandlers, createToolSchemas as createGeneratorToolSchemas } from "./generator/tools.js";
+import { StableDiffusionWebuiGenerator } from "./generator/image-generator.js";
 
 const server = new McpServer({
   name: "aseprite-mcp",
@@ -112,6 +113,10 @@ server.registerTool(
     inputSchema: characterPipelineToolSchemas.character_pipeline_build,
   },
   characterPipelineToolHandlers.character_pipeline_build
+);
+
+const generator = new StableDiffusionWebuiGenerator(
+  "http://127.0.0.1:7860"
 );
 
 server.registerTool(
