@@ -3,10 +3,22 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { createToolHandlers as createAsepriteToolHandlers, createToolSchemas as createAsepriteToolSchemas } from "./aseprite/tools.js";
 import { createToolHandlers as createLuaToolHandlers, createToolSchemas as createLuaToolSchemas } from "./lua/tools.js";
+import path from "node:path";
+import { readFileSync } from "node:fs";
+
+let version: string | undefined;
+
+try {
+  const packageJsonPath = path.join(process.cwd(), "package.json");
+  const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf8"));
+  version = packageJson.version;
+} catch (error) {
+  console.error("Failed to read package.json:", error);
+}
 
 const server = new McpServer({
   name: "aseprite-mcp",
-  version: "0.1.0"
+  version: version || "0.1.0"
 });
 
 const asepriteToolSchemas = createAsepriteToolSchemas();
