@@ -28,14 +28,14 @@ Adds deeper control using Aseprite Lua scripting, enabling safe AI-driven editin
 ## How to use
 1) Run directly with npx
 ```bash
-npx -y aseprite-mcp
+npx -y @iborymagic/aseprite-mcp
 ```
 
 2) Local Build & Run (for development)
 ```bash
 npm install
 npm run build
-npx aseprite-mcp
+npx @iborymagic/aseprite-mcp
 ```
 
 ### Using with Claude Desktop
@@ -45,7 +45,7 @@ Add the following to your claude_desktop_config.json
   "mcpServers": {
     "aseprite-mcp": {
       "command": "npx",
-      "args": ["-y", "aseprite-mcp"]
+      "args": ["-y", "@iborymagic/aseprite-mcp"]
     }
   }
 }
@@ -58,7 +58,7 @@ Add the following to your mcp.json
   "mcpServers": {
     "aseprite-mcp": {
       "command": "npx",
-      "args": ["-y", "aseprite-mcp"]
+      "args": ["-y", "@iborymagic/aseprite-mcp"]
     }
   }
 }
