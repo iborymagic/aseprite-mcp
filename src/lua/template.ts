@@ -63,7 +63,56 @@ export const LUA_TEMPLATES: LuaTemplateMeta[] = [
     params: ["inputFile", "tag", "outputDir"],
     optionalParams: ["filenamePrefix"],
     scriptPath: path.join(__dirname, "templates", "export_tag_frames.lua")
+  },
+  {
+    id: "get_is_layer_exists",
+    description: "Checks if a layer exists in the active sprite",
+    params: ["layerName"],
+    scriptPath: path.join(__dirname, "templates", "get_is_layer_exists.lua")
+  },
+  {
+    id: "get_is_tag_exists",
+    description: "Checks if a tag exists in the active sprite",
+    params: ["tagName"],
+    scriptPath: path.join(__dirname, "templates", "get_is_tag_exists.lua")
+  },
+  {
+    id: "get_palette_info",
+    description: "Gets information about the palette of the active sprite",
+    params: [],
+    scriptPath: path.join(__dirname, "templates", "get_palette_info.lua")
+  },
+  {
+    id: "get_selection_bounds",
+    description: "Gets the bounds of the selection in the active sprite",
+    params: [],
+    scriptPath: path.join(__dirname, "templates", "get_selection_bounds.lua")
+  },
+  {
+    id: "get_tag_list",
+    description: "Gets a list of all tags in the active sprite",
+    params: [],
+    scriptPath: path.join(__dirname, "templates", "get_tag_list.lua")
+  },
+  {
+    id: "get_layer_list",
+    description: "Gets a list of all layers in the active sprite",
+    params: [],
+    scriptPath: path.join(__dirname, "templates", "get_layer_list.lua")
+  },
+  {
+    id: "get_frame_info",
+    description: "Gets information about the current frame",
+    params: [],
+    scriptPath: path.join(__dirname, "templates", "get_frame_info.lua")
+  },
+  {
+    id: "get_active_sprite_info",
+    description: "Gets information about the active sprite",
+    params: [],
+    scriptPath: path.join(__dirname, "templates", "get_active_sprite_info.lua")
   }
+
 ];
 
 export function findLuaTemplate(id: string): LuaTemplateMeta | undefined {
