@@ -67,12 +67,120 @@ server.registerTool(
 );
 
 server.registerTool(
-  "aseprite_run_lua_template",
+  "auto_crop_transparent",
   {
-    description: "Run a predefined Aseprite Lua template with parameters.",
-    inputSchema: luaToolSchemas.aseprite_run_lua_template,
+    description: "Automatically crops empty transparent borders of the sprite",
+    inputSchema: luaToolSchemas.auto_crop_transparent,
   },
-  luaToolHandlers.aseprite_run_lua_template
+  luaToolHandlers.auto_crop_transparent
+);
+
+server.registerTool(
+  "merge_visible_layers",
+  {
+    description: "Merges all currently visible layers into a single layer",
+    inputSchema: luaToolSchemas.merge_visible_layers,
+  },
+  luaToolHandlers.merge_visible_layers
+);
+
+server.registerTool(
+  "normalize_animation_speed",
+  {
+    description: "Normalizes all frame durations to a single target duration (in seconds)",
+    inputSchema: luaToolSchemas.normalize_animation_speed,
+  },
+  luaToolHandlers.normalize_animation_speed
+);
+
+server.registerTool(
+  "recolor_palette",
+  {
+    description: "Recolors the palette based on a mapping of from->to colors",
+    inputSchema: luaToolSchemas.recolor_palette,
+  },
+  luaToolHandlers.recolor_palette
+);
+
+server.registerTool(
+  "remove_layer_by_name",
+  {
+    description: "Removes a layer with a given name and saves to a new file (or overwrites)",
+    inputSchema: luaToolSchemas.remove_layer_by_name,
+  },
+  luaToolHandlers.remove_layer_by_name
+);
+
+server.registerTool(
+  "export_layer_only",
+  {
+    description: "Exports only the specified layer to a flattened PNG",
+    inputSchema: luaToolSchemas.export_layer_only,
+  },
+  luaToolHandlers.export_layer_only
+);
+
+server.registerTool(
+  "export_tag_frames",
+  {
+    description: "Exports frames inside a specific animation tag to PNG files",
+    inputSchema: luaToolSchemas.export_tag_frames,
+  },
+  luaToolHandlers.export_tag_frames
+);
+
+server.registerTool(
+  "get_is_layer_exists",
+  {
+    description: "Checks if a layer exists in the active sprite",
+    inputSchema: luaToolSchemas.get_is_layer_exists,
+  },
+  luaToolHandlers.get_is_layer_exists
+);
+
+server.registerTool(
+  "get_is_tag_exists",
+  {
+    description: "Checks if a tag exists in the active sprite",
+    inputSchema: luaToolSchemas.get_is_tag_exists,
+  },
+  luaToolHandlers.get_is_tag_exists
+);
+
+server.registerTool(
+  "get_palette_info",
+  { description: "Gets information about the palette of the active sprite" },
+  luaToolHandlers.get_palette_info
+);
+
+server.registerTool(
+  "get_selection_bounds",
+  { description: "Gets the bounds of the selection in the active sprite" },
+  luaToolHandlers.get_selection_bounds
+);
+
+server.registerTool(
+  "get_tag_list",
+  { description: "Gets a list of all tags in the active sprite" },
+  luaToolHandlers.get_tag_list
+);
+
+server.registerTool(
+  "get_layer_list",
+  { description: "Gets a list of all layers in the active sprite" },
+  luaToolHandlers.get_layer_list
+);
+
+server.registerTool(
+  "get_frame_info",
+  { description: "Gets information about the current frame" },
+  luaToolHandlers.get_frame_info
+);
+
+server.registerTool(
+  "get_active_sprite_info",
+  { description: "Gets information about the active sprite" },
+  luaToolHandlers.get_active_sprite_info
 );
 
 server.registerTool(

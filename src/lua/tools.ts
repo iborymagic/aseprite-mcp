@@ -22,57 +22,337 @@ export function createToolHandlers() {
     });
   }
   
-  const aseprite_run_lua_template: ToolCallback<typeof toolSchemas.aseprite_run_lua_template> = async ({
+  const run_lua_template = async ({
     templateId,
     params = {}
+  }: {
+    templateId: string;
+    params: Record<string, unknown>;
   }) => {
     const template = findLuaTemplate(templateId);
     if (!template) {
-      return errorResult("aseprite_run_lua_template", new Error(`Unknown templateId: ${templateId}`));
+      throw new Error(`Unknown templateId: ${templateId}`);
     }
 
     const missing = template.params.filter(key => !params.hasOwnProperty(key));
     if (missing.length > 0) {
-      return errorResult("aseprite_run_lua_template", new Error(`Missing required params: ${missing.join(", ")}`));
+      throw new Error(`Missing required params: ${missing.join(", ")}`);
     }
 
+    const result = await runLuaScriptFile(template.scriptPath, params);
+
+    if (result.timedOut) {
+      throw new Error(`Lua script timed out while executing template: ${templateId}`);
+    }
+
+    const stderrTrimmed = result.stderr.trim();
+    const stdoutTrimmed = result.stdout.trim();
+    
+    if (stderrTrimmed && stderrTrimmed.includes("ERROR:")) {
+      throw new Error(`Script execution failed: ${stderrTrimmed}`);
+    }
+
+    if (stdoutTrimmed && stdoutTrimmed.includes("ERROR:")) {
+      throw new Error(`Script execution failed: ${stdoutTrimmed}`);
+    }
+
+    return {
+      command: result.command,
+      stdout: stdoutTrimmed,
+      stderr: stderrTrimmed,
+    };
+  };
+
+  const auto_crop_transparent: ToolCallback<typeof toolSchemas.auto_crop_transparent> = async ({
+    saveOutput
+  }) => {
     try {
-      const result = await runLuaScriptFile(template.scriptPath, params);
-
-      if (result.timedOut) {
-        return errorResult(
-          "aseprite_run_lua_template",
-          `Lua script timed out while executing template: ${templateId}`
-        );
-      }
-
-      const stderrTrimmed = result.stderr.trim();
-      const stdoutTrimmed = result.stdout.trim();
-      
-      if (stderrTrimmed && stderrTrimmed.includes("ERROR:")) {
-        return errorResult(
-          "aseprite_run_lua_template",
-          `Script execution failed: ${stderrTrimmed}`
-        );
-      }
-
-      if (stdoutTrimmed && stdoutTrimmed.includes("ERROR:")) {
-        return errorResult(
-          "aseprite_run_lua_template",
-          `Script execution failed: ${stdoutTrimmed}`
-        );
-      }
-
-      return successResult("aseprite_run_lua_template", {
+      const result = await run_lua_template({
+        templateId: "auto_crop_transparent",
+        params: { saveOutput : ensureSafePath(saveOutput, { createDirIfNeeded: true }) }
+      });
+  
+      return successResult("auto_crop_transparent", {
         command: result.command,
-        templateId,
-        stdout: stdoutTrimmed,
-        stderr: stderrTrimmed
+        stdout: result.stdout,
+        stderr: result.stderr
       });
     } catch (err: unknown) {
-      return errorResult("aseprite_run_lua_template", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
+      return errorResult("auto_crop_transparent", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
     }
-  };
+  }
+
+  const merge_visible_layers: ToolCallback<typeof toolSchemas.merge_visible_layers> = async ({
+    saveOutput
+  }) => {
+    try {
+      const result = await run_lua_template({
+        templateId: "merge_visible_layers",
+        params: { saveOutput : ensureSafePath(saveOutput, { createDirIfNeeded: true }) }
+      });
+
+      return successResult("merge_visible_layers", {
+        command: result.command,
+        stdout: result.stdout,
+        stderr: result.stderr
+      });
+    } catch (err: unknown) {
+      return errorResult("merge_visible_layers", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
+  const normalize_animation_speed: ToolCallback<typeof toolSchemas.normalize_animation_speed> = async ({
+    saveOutput,
+    targetDuration
+  }) => {
+    try {
+      const result = await run_lua_template({
+        templateId: "normalize_animation_speed",
+        params: { saveOutput : ensureSafePath(saveOutput, { createDirIfNeeded: true }), targetDuration }
+      });
+
+      return successResult("normalize_animation_speed", {
+        command: result.command,
+        stdout: result.stdout,
+        stderr: result.stderr
+      });
+    } catch (err: unknown) {
+      return errorResult("normalize_animation_speed", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
+  const recolor_palette: ToolCallback<typeof toolSchemas.recolor_palette> = async ({
+    saveOutput,
+    mapping
+  }) => {
+    try {
+      const result = await run_lua_template({
+        templateId: "recolor_palette",
+        params: { 
+          saveOutput : ensureSafePath(saveOutput, { createDirIfNeeded: true }), 
+          mapping 
+        }
+      });
+
+      return successResult("recolor_palette", {
+        command: result.command,
+        stdout: result.stdout,
+        stderr: result.stderr
+      });
+    } catch (err: unknown) {
+      return errorResult("recolor_palette", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
+  const remove_layer_by_name: ToolCallback<typeof toolSchemas.remove_layer_by_name> = async ({
+    layerName,
+    saveOutput
+  }) => {
+    try {
+      const result = await run_lua_template({
+        templateId: "remove_layer_by_name",
+        params: { 
+          layerName, 
+          saveOutput : ensureSafePath(saveOutput, { createDirIfNeeded: true }) 
+        }
+      });
+
+      return successResult("remove_layer_by_name", {
+        command: result.command,
+        stdout: result.stdout,
+        stderr: result.stderr
+      });
+    } catch (err: unknown) {
+      return errorResult("remove_layer_by_name", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
+  const export_layer_only: ToolCallback<typeof toolSchemas.export_layer_only> = async ({
+    layerName,
+    outputDir
+  }) => {
+    try {
+      const result = await run_lua_template({
+        templateId: "export_layer_only",
+        params: { 
+          layerName, 
+          outputDir : ensureSafePath(outputDir, { createDirIfNeeded: true }) 
+        }
+      });
+
+      return successResult("export_layer_only", {
+        command: result.command,
+        stdout: result.stdout,
+        stderr: result.stderr
+      });
+    } catch (err: unknown) {
+      return errorResult("export_layer_only", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
+  const export_tag_frames: ToolCallback<typeof toolSchemas.export_tag_frames> = async ({
+    tag,
+    outputDir,
+    filenamePrefix
+  }) => {
+    try {
+      const result = await run_lua_template({
+        templateId: "export_tag_frames",
+        params: { 
+          tag, 
+          outputDir : ensureSafePath(outputDir, { createDirIfNeeded: true }),
+          filenamePrefix : filenamePrefix
+        }
+      });
+
+      return successResult("export_tag_frames", {
+        command: result.command,
+        stdout: result.stdout,
+        stderr: result.stderr
+      });
+    } catch (err: unknown) {
+      return errorResult("export_tag_frames", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
+  const get_is_layer_exists: ToolCallback<typeof toolSchemas.get_is_layer_exists> = async ({
+    layerName
+  }) => {
+    try {
+      const result = await run_lua_template({
+        templateId: "get_is_layer_exists",
+        params: { layerName }
+      });
+
+      return successResult("get_is_layer_exists", {
+        command: result.command,
+        stdout: result.stdout,
+        stderr: result.stderr
+      });
+    } catch (err: unknown) {
+      return errorResult("get_is_layer_exists", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
+  const get_is_tag_exists: ToolCallback<typeof toolSchemas.get_is_tag_exists> = async ({
+    tagName
+  }) => {
+    try {
+      const result = await run_lua_template({
+        templateId: "get_is_tag_exists",
+        params: { tagName }
+      });
+
+      return successResult("get_is_tag_exists", {
+        command: result.command,
+        stdout: result.stdout,
+        stderr: result.stderr
+      });
+    } catch (err: unknown) {
+      return errorResult("get_is_tag_exists", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
+  const get_palette_info = async () => {
+    try {
+      const result = await run_lua_template({
+        templateId: "get_palette_info",
+        params: {}
+      });
+
+      return successResult("get_palette_info", {
+        command: result.command,
+        stdout: result.stdout,
+        stderr: result.stderr
+      });
+    } catch (err: unknown) {
+      return errorResult("get_palette_info", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
+  const get_selection_bounds = async () => {
+    try {
+      const result = await run_lua_template({
+        templateId: "get_selection_bounds",
+        params: {}
+      });
+
+      return successResult("get_selection_bounds", {
+        command: result.command,
+        stdout: result.stdout,
+        stderr: result.stderr
+      });
+    } catch (err: unknown) {
+      return errorResult("get_selection_bounds", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
+  const get_tag_list = async () => {
+    try {
+      const result = await run_lua_template({
+        templateId: "get_tag_list",
+        params: {}
+      });
+
+      return successResult("get_tag_list", {
+        command: result.command,
+        stdout: result.stdout,
+        stderr: result.stderr
+      });
+    } catch (err: unknown) {
+      return errorResult("get_tag_list", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+  const get_layer_list = async () => {
+    try {
+      const result = await run_lua_template({
+        templateId: "get_layer_list",
+        params: {}
+      });
+
+      return successResult("get_layer_list", {
+        command: result.command,
+        stdout: result.stdout,
+        stderr: result.stderr
+      });
+    } catch (err: unknown) {
+      return errorResult("get_layer_list", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
+  const get_frame_info = async () => {
+    try {
+      const result = await run_lua_template({
+        templateId: "get_frame_info",
+        params: {}
+      });
+
+      return successResult("get_frame_info", {
+        command: result.command,
+        stdout: result.stdout,
+        stderr: result.stderr
+      });
+    } catch (err: unknown) {
+      return errorResult("get_frame_info", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
+  const get_active_sprite_info = async () => {
+    try {
+      const result = await run_lua_template({
+        templateId: "get_active_sprite_info",
+        params: {}
+      });
+
+      return successResult("get_active_sprite_info", {
+        command: result.command,
+        stdout: result.stdout,
+        stderr: result.stderr
+      });
+    } catch (err: unknown) {
+      return errorResult("get_active_sprite_info", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
 
   const aseprite_run_lua_script: ToolCallback<typeof toolSchemas.aseprite_run_lua_script> = async ({
     scriptPath,
@@ -129,17 +409,27 @@ export function createToolHandlers() {
 
   return {
     aseprite_list_lua_templates,
-    aseprite_run_lua_template,
-    aseprite_run_lua_script
+    aseprite_run_lua_script,
+    auto_crop_transparent,
+    merge_visible_layers,
+    normalize_animation_speed,
+    recolor_palette,
+    remove_layer_by_name,
+    export_layer_only,
+    export_tag_frames,
+    get_is_layer_exists,
+    get_is_tag_exists,
+    get_palette_info,
+    get_selection_bounds,
+    get_tag_list,
+    get_layer_list,
+    get_frame_info,
+    get_active_sprite_info,
   };
 };
 
 export function createToolSchemas() {
   return {
-    aseprite_run_lua_template: z.object({
-      templateId: z.string(),
-      params: z.record(z.string(), z.any()).optional()
-    }),
     aseprite_run_lua_script: z
       .object({
         scriptPath: z.string().optional(),
@@ -149,5 +439,38 @@ export function createToolSchemas() {
       .refine(v => !!v.scriptPath || !!v.scriptContent, {
         message: "Either scriptPath or scriptContent is required."
       }),
+    auto_crop_transparent: z.object({
+      saveOutput: z.string(),
+    }),
+    merge_visible_layers: z.object({
+      saveOutput: z.string(),
+    }),
+    normalize_animation_speed: z.object({
+      saveOutput: z.string(),
+      targetDuration: z.number(),
+    }),
+    recolor_palette: z.object({
+      saveOutput: z.string(),
+      mapping: z.string(),
+    }),
+    remove_layer_by_name: z.object({
+      layerName: z.string(),
+      saveOutput: z.string(),
+    }),
+    export_layer_only: z.object({
+      layerName: z.string(),
+      outputDir: z.string(),
+    }),
+    export_tag_frames: z.object({
+      tag: z.string(),
+      outputDir: z.string(),
+      filenamePrefix: z.string().optional(),
+    }),
+    get_is_layer_exists: z.object({
+      layerName: z.string(),
+    }),
+    get_is_tag_exists: z.object({
+      tagName: z.string(),
+    }),
   };
 }
