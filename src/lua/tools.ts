@@ -162,6 +162,17 @@ export function createToolHandlers() {
     inputFile
   }) => {
     try {
+      const getIsLayerExistsResult = await get_is_layer_exists({
+        inputFile,
+        layerName
+      }, {} as any);
+
+      const content = getIsLayerExistsResult.content[0] as { text: string };
+      const isLayerExist = JSON.parse(content.text).result === 'true';
+
+      if (!isLayerExist) {
+        return errorResult("remove_layer_by_name", `Layer not found: ${layerName}`);
+      }
       const result = await run_lua_template({
         templateId: "remove_layer_by_name",
         params: { 
@@ -188,6 +199,18 @@ export function createToolHandlers() {
     inputFile
   }) => {
     try {
+      const getIsLayerExistsResult = await get_is_layer_exists({
+        inputFile,
+        layerName
+      }, {} as any);
+
+      const content = getIsLayerExistsResult.content[0] as { text: string };
+      const isLayerExist = JSON.parse(content.text).result === 'true';
+
+      if (!isLayerExist) {
+        return errorResult("export_layer_only", `Layer not found: ${layerName}`);
+      }
+
       const result = await run_lua_template({
         templateId: "export_layer_only",
         params: { 
@@ -215,6 +238,18 @@ export function createToolHandlers() {
     inputFile
   }) => {
     try {
+      const getIsTagExistsResult = await get_is_tag_exists({
+        inputFile,
+        tagName: tag
+      }, {} as any);
+
+      const content = getIsTagExistsResult.content[0] as { text: string };
+      const isTagExist = JSON.parse(content.text).result === 'true';
+
+      if (!isTagExist) {
+        return errorResult("export_tag_frames", `Tag not found: ${tag}`);
+      }
+
       const result = await run_lua_template({
         templateId: "export_tag_frames",
         params: { 
