@@ -41,10 +41,6 @@ export function createToolHandlers() {
 
     const result = await runLuaScriptFile(template.scriptPath, params);
 
-    if (result.timedOut) {
-      throw new Error(`Lua script timed out while executing template: ${templateId}`);
-    }
-
     const stderrTrimmed = result.stderr.trim();
     const stdoutTrimmed = result.stdout.trim();
     
@@ -76,10 +72,9 @@ export function createToolHandlers() {
         }
       });
   
-      return successResult("auto_crop_transparent", {
-        command: result.command,
-        stdout: result.stdout,
-        stderr: result.stderr
+      return successResult("auto_crop_transparent", result.stdout, {
+        inputFile: inputFile,
+        saveOutput: saveOutput,
       });
     } catch (err: unknown) {
       return errorResult("auto_crop_transparent", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
@@ -99,10 +94,10 @@ export function createToolHandlers() {
         }
       });
 
-      return successResult("merge_visible_layers", {
+      return successResult("merge_visible_layers", result.stdout, {
         command: result.command,
-        stdout: result.stdout,
-        stderr: result.stderr
+        inputFile: inputFile,
+        saveOutput: saveOutput,
       });
     } catch (err: unknown) {
       return errorResult("merge_visible_layers", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
@@ -124,10 +119,11 @@ export function createToolHandlers() {
         }
       });
 
-      return successResult("normalize_animation_speed", {
+      return successResult("normalize_animation_speed", result.stdout, {
         command: result.command,
-        stdout: result.stdout,
-        stderr: result.stderr
+        inputFile: inputFile,
+        saveOutput: saveOutput,
+        targetDuration: targetDuration,
       });
     } catch (err: unknown) {
       return errorResult("normalize_animation_speed", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
@@ -149,10 +145,11 @@ export function createToolHandlers() {
         }
       });
 
-      return successResult("recolor_palette", {
+      return successResult("recolor_palette", result.stdout, {
         command: result.command,
-        stdout: result.stdout,
-        stderr: result.stderr
+        inputFile: inputFile,
+        saveOutput: saveOutput,
+        mapping: mapping,
       });
     } catch (err: unknown) {
       return errorResult("recolor_palette", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
@@ -174,10 +171,11 @@ export function createToolHandlers() {
         }
       });
 
-      return successResult("remove_layer_by_name", {
+      return successResult("remove_layer_by_name", result.stdout, {
         command: result.command,
-        stdout: result.stdout,
-        stderr: result.stderr
+        inputFile: inputFile,
+        layerName: layerName,
+        saveOutput: saveOutput,
       });
     } catch (err: unknown) {
       return errorResult("remove_layer_by_name", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
@@ -199,10 +197,11 @@ export function createToolHandlers() {
         }
       });
 
-      return successResult("export_layer_only", {
+      return successResult("export_layer_only", result.stdout, {
         command: result.command,
-        stdout: result.stdout,
-        stderr: result.stderr
+        inputFile: inputFile,
+        layerName: layerName,
+        outputDir: outputDir,
       });
     } catch (err: unknown) {
       return errorResult("export_layer_only", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
@@ -226,10 +225,12 @@ export function createToolHandlers() {
         }
       });
 
-      return successResult("export_tag_frames", {
+      return successResult("export_tag_frames", result.stdout, {
         command: result.command,
-        stdout: result.stdout,
-        stderr: result.stderr
+        inputFile: inputFile,
+        tag: tag,
+        outputDir: outputDir,
+        filenamePrefix: filenamePrefix,
       });
     } catch (err: unknown) {
       return errorResult("export_tag_frames", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
@@ -246,10 +247,10 @@ export function createToolHandlers() {
         params: { layerName, inputFile }
       });
 
-      return successResult("get_is_layer_exists", {
+      return successResult("get_is_layer_exists", result.stdout, {
         command: result.command,
-        stdout: result.stdout,
-        stderr: result.stderr
+        inputFile: inputFile,
+        layerName: layerName,
       });
     } catch (err: unknown) {
       return errorResult("get_is_layer_exists", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
@@ -266,10 +267,10 @@ export function createToolHandlers() {
         params: { tagName, inputFile }
       });
 
-      return successResult("get_is_tag_exists", {
+      return successResult("get_is_tag_exists", result.stdout, {
         command: result.command,
-        stdout: result.stdout,
-        stderr: result.stderr
+        inputFile: inputFile,
+        tagName: tagName,
       });
     } catch (err: unknown) {
       return errorResult("get_is_tag_exists", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
@@ -283,10 +284,9 @@ export function createToolHandlers() {
         params: { inputFile }
       });
       
-      return successResult("get_palette_info", {
+      return successResult("get_palette_info", result.stdout, {
         command: result.command,
-        stdout: result.stdout,
-        stderr: result.stderr
+        inputFile: inputFile,
       });
     } catch (err: unknown) {
       return errorResult("get_palette_info", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
@@ -300,10 +300,9 @@ export function createToolHandlers() {
         params: { inputFile }
       });
       
-      return successResult("get_selection_bounds", {
+      return successResult("get_selection_bounds", result.stdout, {
         command: result.command,
-        stdout: result.stdout,
-        stderr: result.stderr
+        inputFile: inputFile,
       });
     } catch (err: unknown) {
       return errorResult("get_selection_bounds", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
@@ -317,10 +316,9 @@ export function createToolHandlers() {
         params: { inputFile }
       });
 
-      return successResult("get_tag_list", {
+      return successResult("get_tag_list", result.stdout, {
         command: result.command,
-        stdout: result.stdout,
-        stderr: result.stderr
+        inputFile: inputFile,
       });
     } catch (err: unknown) {
       return errorResult("get_tag_list", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
@@ -333,10 +331,9 @@ export function createToolHandlers() {
         params: { inputFile }
       });
 
-      return successResult("get_layer_list", {
+      return successResult("get_layer_list", result.stdout, {
         command: result.command,
-        stdout: result.stdout,
-        stderr: result.stderr
+        inputFile: inputFile,
       });
     } catch (err: unknown) {
       return errorResult("get_layer_list", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
@@ -350,10 +347,9 @@ export function createToolHandlers() {
         params: { inputFile }
       });
 
-      return successResult("get_frame_info", {
+      return successResult("get_frame_info", result.stdout, {
         command: result.command,
-        stdout: result.stdout,
-        stderr: result.stderr
+        inputFile: inputFile,
       });
     } catch (err: unknown) {
       return errorResult("get_frame_info", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
@@ -367,10 +363,9 @@ export function createToolHandlers() {
         params: { inputFile }
       });
 
-      return successResult("get_active_sprite_info", {
+      return successResult("get_active_sprite_info", result.stdout, {
         command: result.command,
-        stdout: result.stdout,
-        stderr: result.stderr
+        inputFile: inputFile,
       });
     } catch (err: unknown) {
       return errorResult("get_active_sprite_info", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
@@ -395,13 +390,6 @@ export function createToolHandlers() {
 
       const result = await runLuaScriptFile(luaFilePath, params);
 
-      if (result.timedOut) {
-        return errorResult(
-          "aseprite_run_lua_script",
-          `Lua script timed out while executing script: ${luaFilePath}`
-        );
-      }  
-
       const stderrTrimmed = result.stderr.trim();
       const stdoutTrimmed = result.stdout.trim();
       
@@ -419,10 +407,12 @@ export function createToolHandlers() {
         );
       }
 
-      return successResult("aseprite_run_lua_script", {
+      return successResult("aseprite_run_lua_script", result.stdout, {
         command: result.command,
-        stdout: stdoutTrimmed,
-        stderr: stderrTrimmed
+        inputFile: params.inputFile,
+        scriptPath: luaFilePath,
+        scriptContent: scriptContent,
+        params: params,
       });
 
     } catch (err: unknown) {

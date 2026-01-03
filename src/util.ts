@@ -1,4 +1,4 @@
-export function successResult(tool: string, result: any) {
+export function successResult(tool: string, result: any, params?: any) {
   return {
     content: [
       {
@@ -6,6 +6,7 @@ export function successResult(tool: string, result: any) {
         text: JSON.stringify({
           success: true,
           tool,
+          params: params ?? null,
           result,
         }, null, 2)
       }

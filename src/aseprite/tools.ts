@@ -39,16 +39,18 @@ export function createToolHandlers() {
   
       const result = await runAsepriteCommand(args);
   
-      return successResult("aseprite_export_sheet", {
-        command: result.command,
-        inputFile: inputAbsPath,
-        outputSheet: sheetAbsPath,
-        sheetType,
-        dataFile: dataAbsPath ? dataAbsPath : undefined,
-        tag: tag ? tag : undefined,
-        stdout: result.stdout.trim(),
-        stderr: result.stderr.trim(),
-      });
+      return successResult(
+        "aseprite_export_sheet", 
+        result.stdout.trim(),
+        {
+          command: result.command,
+          inputFile: inputAbsPath,
+          outputSheet: sheetAbsPath,
+          sheetType: sheetType,
+          dataFile: dataAbsPath ? dataAbsPath : undefined,
+          tag: tag ? tag : undefined,
+        }
+      );
     } catch (e: unknown) {
       return errorResult("aseprite_export_sheet", e instanceof Error ? e.message : String(e));
     }
@@ -70,14 +72,16 @@ export function createToolHandlers() {
   
       const result = await runAsepriteCommand(args);
   
-      return successResult("aseprite_export_frames", {
-        command: result.command,
-        inputFile: inputAbsPath,
-        outputPattern: outputAbsPath,
-        tag: tag ? tag : undefined,
-        stdout: result.stdout.trim(),
-        stderr: result.stderr.trim(),
-      });
+      return successResult(
+        "aseprite_export_frames", 
+        result.stdout.trim(), 
+        {
+          command: result.command,
+          inputFile: inputAbsPath,
+          outputPattern: outputAbsPath,
+          tag: tag ? tag : undefined,
+        }
+      );
     } catch (e: unknown) {
       return errorResult("aseprite_export_frames", e instanceof Error ? e.message : String(e));
     }    
@@ -106,15 +110,17 @@ export function createToolHandlers() {
         metaText = `Failed to read metadata: ${e instanceof Error ? e.message : String(e)}`;
       }
   
-      return successResult("aseprite_export_metadata", {
-        command: result.command,
-        inputFile: inputAbsPath,
-        dataFile: dataAbsPath,
-        format: format ? format : undefined,
-        stdout: result.stdout.trim(),
-        stderr: result.stderr.trim(),
-        metadata: metaText,
-      });
+      return successResult(
+        "aseprite_export_metadata", 
+        result.stdout.trim(), 
+        {
+          command: result.command,
+          inputFile: inputAbsPath,
+          dataFile: dataAbsPath,
+          format,
+          metadata: metaText,
+        }
+      );
     } catch (e: unknown) {
       return errorResult("aseprite_export_metadata", e instanceof Error ? e.message : String(e));
     }

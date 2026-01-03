@@ -20,12 +20,7 @@ export async function runAsepriteCommand(args: string[], timeout: number = 10_00
     return { command, stdout, stderr, timedOut: false };
   } catch (error: any) {
     if (error.killed === true && error.code === null) {
-      return { 
-        command, 
-        stdout: "", 
-        stderr: "Aseprite command timed out", 
-        timedOut: true 
-      };
+      throw new Error(`Aseprite command timed out: ${command}`);
     }
 
     throw new Error(

@@ -200,7 +200,7 @@ describe("Aseprite MCP Lua templates", () => {
 
     expectBaseResult(parsedResult);
     expect(parsedResult.success).toBe(true);
-    expect(parsedResult.result.stdout).toContain("true");
+    expect(parsedResult.result).toContain("true");
   });
 
   it("should get tag existence", async () => {
@@ -214,7 +214,7 @@ describe("Aseprite MCP Lua templates", () => {
 
     expectBaseResult(parsedResult);
     expect(parsedResult.success).toBe(true);
-    expect(parsedResult.result.stdout).toContain("true");
+    expect(parsedResult.result).toContain("true");
   });
 
   it("should get palette info", async () => {
@@ -228,7 +228,7 @@ describe("Aseprite MCP Lua templates", () => {
     expectBaseResult(parsedResult);
     expect(parsedResult.success).toBe(true);
 
-    const parsedPaletteInfo = JSON.parse(parsedResult.result.stdout);
+    const parsedPaletteInfo = JSON.parse(parsedResult.result);
     expect(parsedPaletteInfo.size).toBeDefined();
     expect(parsedPaletteInfo.colors).toBeDefined();
   });
@@ -258,7 +258,7 @@ describe("Aseprite MCP Lua templates", () => {
     expect(parsedResult.success).toBe(true);
     expect(parsedResult.result).toBeDefined();
 
-    const parsedOutput = JSON.parse(parsedResult.result.stdout);
+    const parsedOutput = JSON.parse(parsedResult.result);
     expect(parsedOutput.length).toBeGreaterThan(0);
   });
 
@@ -274,7 +274,7 @@ describe("Aseprite MCP Lua templates", () => {
     expect(parsedResult.success).toBe(true);
     expect(parsedResult.result).toBeDefined();
 
-    const parsedOutput = JSON.parse(parsedResult.result.stdout);
+    const parsedOutput = JSON.parse(parsedResult.result);
     expect(parsedOutput.length).toBeGreaterThan(0);
   });
 
@@ -290,7 +290,7 @@ describe("Aseprite MCP Lua templates", () => {
     expect(parsedResult.success).toBe(true);
     expect(parsedResult.result).toBeDefined();
 
-    const parsedOutput = JSON.parse(parsedResult.result.stdout);
+    const parsedOutput = JSON.parse(parsedResult.result);
     expect(parsedOutput.currentFrame).toBeDefined();
     expect(parsedOutput.frames).toBeDefined();
   });
@@ -307,7 +307,7 @@ describe("Aseprite MCP Lua templates", () => {
     expect(parsedResult.success).toBe(true);
     expect(parsedResult.result).toBeDefined();
 
-    const parsedOutput = JSON.parse(parsedResult.result.stdout);
+    const parsedOutput = JSON.parse(parsedResult.result);
     expect(parsedOutput.width).toBeDefined();
     expect(parsedOutput.height).toBeDefined();
     expect(parsedOutput.colorMode).toBeDefined();
