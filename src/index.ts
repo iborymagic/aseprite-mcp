@@ -7,28 +7,22 @@ import path from "node:path";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-let version: string;
+let version: string | undefined;
 
 try {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
-  
+
   const packageJsonPath = path.join(__dirname, "../package.json");
   const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf8"));
   version = packageJson.version;
 } catch (error) {
-  try {
-    const packageJsonPath = path.join(process.cwd(), "package.json");
-    const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf8"));
-    version = packageJson.version;
-  } catch (error) {
-    version = "unknown";
-  }
+  console.error("Failed to read package.json:", error);
 }
 
 const server = new McpServer({
   name: "aseprite-mcp",
-  version: version
+  version: version ?? "unknown"
 });
 
 const asepriteToolSchemas = createAsepriteToolSchemas();
