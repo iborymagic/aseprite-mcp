@@ -3,7 +3,7 @@ import { ensureSafePath } from "../aseprite/path.js";
 
 export async function runLuaScriptFile(
   scriptPath: string,
-  params: Record<string, unknown>
+  params: { inputFile: string } & Record<string, unknown>
 ): Promise<AsepriteCommandResult> {
   const args = ["--batch"];
 

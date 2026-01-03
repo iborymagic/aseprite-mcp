@@ -24,10 +24,10 @@ export function createToolHandlers() {
   
   const run_lua_template = async ({
     templateId,
-    params = {}
+    params
   }: {
     templateId: string;
-    params: Record<string, unknown>;
+    params: { inputFile: string } & Record<string, unknown>;
   }) => {
     const template = findLuaTemplate(templateId);
     if (!template) {
@@ -64,12 +64,16 @@ export function createToolHandlers() {
   };
 
   const auto_crop_transparent: ToolCallback<typeof toolSchemas.auto_crop_transparent> = async ({
-    saveOutput
+    saveOutput,
+    inputFile
   }) => {
     try {
       const result = await run_lua_template({
         templateId: "auto_crop_transparent",
-        params: { saveOutput : ensureSafePath(saveOutput, { createDirIfNeeded: true }) }
+        params: { 
+          inputFile, 
+          saveOutput : ensureSafePath(saveOutput, { createDirIfNeeded: true }) 
+        }
       });
   
       return successResult("auto_crop_transparent", {
@@ -83,12 +87,16 @@ export function createToolHandlers() {
   }
 
   const merge_visible_layers: ToolCallback<typeof toolSchemas.merge_visible_layers> = async ({
-    saveOutput
+    saveOutput,
+    inputFile
   }) => {
     try {
       const result = await run_lua_template({
         templateId: "merge_visible_layers",
-        params: { saveOutput : ensureSafePath(saveOutput, { createDirIfNeeded: true }) }
+        params: { 
+          inputFile, 
+          saveOutput : ensureSafePath(saveOutput, { createDirIfNeeded: true }) 
+        }
       });
 
       return successResult("merge_visible_layers", {
@@ -103,12 +111,17 @@ export function createToolHandlers() {
 
   const normalize_animation_speed: ToolCallback<typeof toolSchemas.normalize_animation_speed> = async ({
     saveOutput,
-    targetDuration
+    targetDuration,
+    inputFile
   }) => {
     try {
       const result = await run_lua_template({
         templateId: "normalize_animation_speed",
-        params: { saveOutput : ensureSafePath(saveOutput, { createDirIfNeeded: true }), targetDuration }
+        params: { 
+          inputFile, 
+          saveOutput : ensureSafePath(saveOutput, { createDirIfNeeded: true }), 
+          targetDuration 
+        }
       });
 
       return successResult("normalize_animation_speed", {
@@ -123,14 +136,16 @@ export function createToolHandlers() {
 
   const recolor_palette: ToolCallback<typeof toolSchemas.recolor_palette> = async ({
     saveOutput,
-    mapping
+    mapping,
+    inputFile
   }) => {
     try {
       const result = await run_lua_template({
         templateId: "recolor_palette",
         params: { 
           saveOutput : ensureSafePath(saveOutput, { createDirIfNeeded: true }), 
-          mapping 
+          mapping,
+          inputFile
         }
       });
 
@@ -146,14 +161,16 @@ export function createToolHandlers() {
 
   const remove_layer_by_name: ToolCallback<typeof toolSchemas.remove_layer_by_name> = async ({
     layerName,
-    saveOutput
+    saveOutput,
+    inputFile
   }) => {
     try {
       const result = await run_lua_template({
         templateId: "remove_layer_by_name",
         params: { 
           layerName, 
-          saveOutput : ensureSafePath(saveOutput, { createDirIfNeeded: true }) 
+          saveOutput : ensureSafePath(saveOutput, { createDirIfNeeded: true }),
+          inputFile
         }
       });
 
@@ -169,14 +186,16 @@ export function createToolHandlers() {
 
   const export_layer_only: ToolCallback<typeof toolSchemas.export_layer_only> = async ({
     layerName,
-    outputDir
+    outputDir,
+    inputFile
   }) => {
     try {
       const result = await run_lua_template({
         templateId: "export_layer_only",
         params: { 
           layerName, 
-          outputDir : ensureSafePath(outputDir, { createDirIfNeeded: true }) 
+          outputDir : ensureSafePath(outputDir, { createDirIfNeeded: true }),
+          inputFile
         }
       });
 
@@ -193,7 +212,8 @@ export function createToolHandlers() {
   const export_tag_frames: ToolCallback<typeof toolSchemas.export_tag_frames> = async ({
     tag,
     outputDir,
-    filenamePrefix
+    filenamePrefix,
+    inputFile
   }) => {
     try {
       const result = await run_lua_template({
@@ -201,7 +221,8 @@ export function createToolHandlers() {
         params: { 
           tag, 
           outputDir : ensureSafePath(outputDir, { createDirIfNeeded: true }),
-          filenamePrefix : filenamePrefix
+          filenamePrefix : filenamePrefix,
+          inputFile
         }
       });
 
@@ -216,12 +237,13 @@ export function createToolHandlers() {
   }
 
   const get_is_layer_exists: ToolCallback<typeof toolSchemas.get_is_layer_exists> = async ({
-    layerName
+    layerName,
+    inputFile
   }) => {
     try {
       const result = await run_lua_template({
         templateId: "get_is_layer_exists",
-        params: { layerName }
+        params: { layerName, inputFile }
       });
 
       return successResult("get_is_layer_exists", {
@@ -235,12 +257,13 @@ export function createToolHandlers() {
   }
 
   const get_is_tag_exists: ToolCallback<typeof toolSchemas.get_is_tag_exists> = async ({
-    tagName
+    tagName,
+    inputFile
   }) => {
     try {
       const result = await run_lua_template({
         templateId: "get_is_tag_exists",
-        params: { tagName }
+        params: { tagName, inputFile }
       });
 
       return successResult("get_is_tag_exists", {
@@ -253,13 +276,13 @@ export function createToolHandlers() {
     }
   }
 
-  const get_palette_info = async () => {
+  const get_palette_info: ToolCallback<typeof toolSchemas.get_palette_info> = async ({ inputFile }) => {
     try {
       const result = await run_lua_template({
         templateId: "get_palette_info",
-        params: {}
+        params: { inputFile }
       });
-
+      
       return successResult("get_palette_info", {
         command: result.command,
         stdout: result.stdout,
@@ -269,14 +292,14 @@ export function createToolHandlers() {
       return errorResult("get_palette_info", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
-
-  const get_selection_bounds = async () => {
+  
+  const get_selection_bounds: ToolCallback<typeof toolSchemas.get_selection_bounds> = async ({ inputFile }) => {
     try {
       const result = await run_lua_template({
         templateId: "get_selection_bounds",
-        params: {}
+        params: { inputFile }
       });
-
+      
       return successResult("get_selection_bounds", {
         command: result.command,
         stdout: result.stdout,
@@ -287,11 +310,11 @@ export function createToolHandlers() {
     }
   }
 
-  const get_tag_list = async () => {
+  const get_tag_list: ToolCallback<typeof toolSchemas.get_tag_list> = async ({ inputFile }) => {
     try {
       const result = await run_lua_template({
         templateId: "get_tag_list",
-        params: {}
+        params: { inputFile }
       });
 
       return successResult("get_tag_list", {
@@ -303,11 +326,11 @@ export function createToolHandlers() {
       return errorResult("get_tag_list", `Execution failed: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
-  const get_layer_list = async () => {
+  const get_layer_list: ToolCallback<typeof toolSchemas.get_layer_list> = async ({ inputFile }) => {
     try {
       const result = await run_lua_template({
         templateId: "get_layer_list",
-        params: {}
+        params: { inputFile }
       });
 
       return successResult("get_layer_list", {
@@ -320,11 +343,11 @@ export function createToolHandlers() {
     }
   }
 
-  const get_frame_info = async () => {
+  const get_frame_info: ToolCallback<typeof toolSchemas.get_frame_info> = async ({ inputFile }) => {
     try {
       const result = await run_lua_template({
         templateId: "get_frame_info",
-        params: {}
+        params: { inputFile }
       });
 
       return successResult("get_frame_info", {
@@ -337,11 +360,11 @@ export function createToolHandlers() {
     }
   }
 
-  const get_active_sprite_info = async () => {
+  const get_active_sprite_info: ToolCallback<typeof toolSchemas.get_active_sprite_info> = async ({ inputFile }) => {
     try {
       const result = await run_lua_template({
         templateId: "get_active_sprite_info",
-        params: {}
+        params: { inputFile }
       });
 
       return successResult("get_active_sprite_info", {
@@ -357,7 +380,7 @@ export function createToolHandlers() {
   const aseprite_run_lua_script: ToolCallback<typeof toolSchemas.aseprite_run_lua_script> = async ({
     scriptPath,
     scriptContent,
-    params = {}
+    params
   }) => {
     try {
       let luaFilePath: string;
@@ -434,43 +457,72 @@ export function createToolSchemas() {
       .object({
         scriptPath: z.string().optional(),
         scriptContent: z.string().optional(),
-        params: z.record(z.string(), z.any()).optional()
+        params: z.object({
+          inputFile: z.string(),
+        }).passthrough()
       })
       .refine(v => !!v.scriptPath || !!v.scriptContent, {
         message: "Either scriptPath or scriptContent is required."
       }),
     auto_crop_transparent: z.object({
       saveOutput: z.string(),
+      inputFile: z.string(),
     }),
     merge_visible_layers: z.object({
       saveOutput: z.string(),
+      inputFile: z.string(),
     }),
     normalize_animation_speed: z.object({
       saveOutput: z.string(),
       targetDuration: z.number(),
+      inputFile: z.string(),
     }),
     recolor_palette: z.object({
       saveOutput: z.string(),
       mapping: z.string(),
+      inputFile: z.string(),
     }),
     remove_layer_by_name: z.object({
       layerName: z.string(),
       saveOutput: z.string(),
+      inputFile: z.string(),
     }),
     export_layer_only: z.object({
       layerName: z.string(),
       outputDir: z.string(),
+      inputFile: z.string(),
     }),
     export_tag_frames: z.object({
       tag: z.string(),
       outputDir: z.string(),
       filenamePrefix: z.string().optional(),
+      inputFile: z.string(),
     }),
     get_is_layer_exists: z.object({
       layerName: z.string(),
+      inputFile: z.string(),
     }),
     get_is_tag_exists: z.object({
       tagName: z.string(),
+      inputFile: z.string(),
+    }),
+    get_palette_info: z.object({
+      inputFile: z.string(),
+    }),
+    get_selection_bounds: z.object({
+      inputFile: z.string(),
+    }),
+    get_tag_list: z.object({
+      inputFile: z.string(),
+    }),
+    get_layer_list: z.object({
+      inputFile: z.string(),
+    }),
+    get_frame_info: z.object({
+      inputFile: z.string(),
+    }),
+    get_active_sprite_info: z.object({
+      inputFile: z.string(),
     }),
   };
 }
