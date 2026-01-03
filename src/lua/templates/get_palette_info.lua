@@ -18,7 +18,7 @@ end
 
 local colors = {}
 
-for i = 0, palette.size - 1 do
+for i = 0, #colors - 1 do
   local c = palette:getColor(i)
   table.insert(colors, {
     r = c.red,
@@ -28,7 +28,7 @@ for i = 0, palette.size - 1 do
   })
 end
 
-return {
-  size = palette.size,
+print(json.encode({
+  size = #colors,
   colors = colors
-}
+}))

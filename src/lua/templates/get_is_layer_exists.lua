@@ -7,24 +7,27 @@ local sprite = app.activeSprite
 
 if not sprite then
   print("ERROR: No active sprite")
-  return false
+  return
 end
 
 if not p or not p.layerName then
   print("ERROR: layerName is required")
-  return false
+  return
 end
 
 local function getIsLayerExists(layers)
   for _, layer in ipairs(layers) do
     if layer.name == p.layerName then
-      return true
+      print(true)
+      return
     end
     if layer.isGroup and getIsLayerExists(layer.layers) then
-      return true
+      print(true)
+      return
     end
   end
-  return false
+  print(false)
+  return
 end
 
-return getIsLayerExists(sprite.layers)
+print(getIsLayerExists(sprite.layers))

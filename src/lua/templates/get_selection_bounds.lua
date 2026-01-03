@@ -16,10 +16,9 @@ if sel.isEmpty then
   return
 end
 
-local b = sel.bounds
-return {
-  x = b.x,
-  y = b.y,
-  width = b.width,
-  height = b.height
-}
+print(json.encode({
+  x = sel.bounds.x,
+  y = sel.bounds.y,
+  width = sel.bounds.width,
+  height = sel.bounds.height
+}))

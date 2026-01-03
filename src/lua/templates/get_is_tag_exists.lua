@@ -7,18 +7,19 @@ local sprite = app.activeSprite
 
 if not sprite then
   print("ERROR: No active sprite")
-  return false
+  return
 end
 
 if not p or not p.tagName then
   print("ERROR: tagName is required")
-  return false
+  return
 end
 
 for _, tag in ipairs(sprite.tags) do
-  if tag.name == target then
-    return true
+  if tag.name == p.tagName then
+    print(true)
+    return
   end
 end
 
-return false
+print(false)

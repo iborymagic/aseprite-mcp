@@ -9,11 +9,11 @@ if not sprite then
   return
 end
 
-return {
+print(json.encode({
   width = sprite.width,
   height = sprite.height,
   colorMode = sprite.colorMode == ColorMode.RGB and "rgb"
            or sprite.colorMode == ColorMode.INDEXED and "indexed"
            or "grayscale",
   frameCount = #sprite.frames
-}
+}))

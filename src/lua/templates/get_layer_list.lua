@@ -18,7 +18,7 @@ local function listLayers(layersList)
       index = layer.stackIndex,
       isGroup = layer.isGroup,
       visible = layer.isVisible,
-      locked = layer.isLocked
+      editable = layer.isEditable
     })
 
     if layer.isGroup then
@@ -28,4 +28,4 @@ local function listLayers(layersList)
 end
 
 listLayers(sprite.layers)
-return layers
+print(json.encode(layers))

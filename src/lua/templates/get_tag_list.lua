@@ -22,4 +22,4 @@ for _, tag in ipairs(sprite.tags) do
   })
 end
 
-return tags
+print(json.encode(tags))

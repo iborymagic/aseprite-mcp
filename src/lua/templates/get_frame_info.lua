@@ -21,4 +21,4 @@ for i, frame in ipairs(sprite.frames) do
   })
 end
 
-return result
+print(json.encode(result))
