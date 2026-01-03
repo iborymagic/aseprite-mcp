@@ -149,37 +149,55 @@ server.registerTool(
 
 server.registerTool(
   "get_palette_info",
-  { description: "Gets information about the palette of the active sprite" },
+  { 
+    description: "Gets information about the palette of the active sprite", 
+    inputSchema: luaToolSchemas.get_palette_info,
+  },
   luaToolHandlers.get_palette_info
 );
 
 server.registerTool(
   "get_selection_bounds",
-  { description: "Gets the bounds of the selection in the active sprite" },
+  { 
+    description: "Gets the bounds of the selection in the active sprite", 
+    inputSchema: luaToolSchemas.get_selection_bounds,
+  },
   luaToolHandlers.get_selection_bounds
 );
 
 server.registerTool(
   "get_tag_list",
-  { description: "Gets a list of all tags in the active sprite" },
+  { 
+    description: "Gets a list of all tags in the active sprite", 
+    inputSchema: luaToolSchemas.get_tag_list,
+  },
   luaToolHandlers.get_tag_list
 );
 
 server.registerTool(
   "get_layer_list",
-  { description: "Gets a list of all layers in the active sprite" },
+  { 
+    description: "Gets a list of all layers in the active sprite", 
+    inputSchema: luaToolSchemas.get_layer_list,
+  },
   luaToolHandlers.get_layer_list
 );
 
 server.registerTool(
   "get_frame_info",
-  { description: "Gets information about the current frame" },
+  { 
+    description: "Gets information about the current frame", 
+    inputSchema: luaToolSchemas.get_frame_info,
+  },
   luaToolHandlers.get_frame_info
 );
 
 server.registerTool(
   "get_active_sprite_info",
-  { description: "Gets information about the active sprite" },
+  { 
+    description: "Gets information about the active sprite", 
+    inputSchema: luaToolSchemas.get_active_sprite_info,
+  },
   luaToolHandlers.get_active_sprite_info
 );
 
