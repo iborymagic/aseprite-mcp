@@ -9,6 +9,9 @@
   "files": [
     "build"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc && npm run copy:lua",
     "copy:lua": "cp -R src/lua/templates build/lua/templates",
