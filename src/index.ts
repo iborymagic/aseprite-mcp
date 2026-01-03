@@ -5,20 +5,24 @@ import { createToolHandlers as createAsepriteToolHandlers, createToolSchemas as 
 import { createToolHandlers as createLuaToolHandlers, createToolSchemas as createLuaToolSchemas } from "./lua/tools.js";
 import path from "node:path";
 import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 
-let version: string | undefined;
+let version: string;
 
 try {
-  const packageJsonPath = path.join(process.cwd(), "package.json");
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  
+  const packageJsonPath = path.join(__dirname, "..", "package.json");
   const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf8"));
   version = packageJson.version;
 } catch (error) {
-  console.error("Failed to read package.json:", error);
+  version = "unknown";
 }
 
 const server = new McpServer({
   name: "aseprite-mcp",
-  version: version || "0.1.0"
+  version: version
 });
 
 const asepriteToolSchemas = createAsepriteToolSchemas();
