@@ -16,6 +16,14 @@ Supports fundamental Aseprite export workflow:
 Adds deeper control using Aseprite Lua scripting, enabling safe AI-driven editing operations such as:
 - `aseprite_list_lua_templates`: Lists available Lua templates
 - Predefined safe Lua automation(templates)
+  - `get_active_sprite_info`: Provides basic information about the currently active sprite
+  - `get_frame_info`: Inspects the animation timeline and frame structure of the active sprite
+  - `get_layer_list`: Returns a full structural overview of all layers in the active sprite, including groups
+  - `get_tag_list`: Lists all animation tags defined in the active sprite
+  - `get_is_layer_exists`: Checks whether a layer with a specific name exists
+  - `get_is_tag_exists`: Checks whether a specific animation tag exists
+  - `get_palette_info`: Inspects the current palette of the active sprite
+  - `get_selection_bounds`: Inspects the current selection state and its bounds
   - `remove_layer_by_name`: Removing specific layers
   - `recolor_palette`: Palette recoloring
   - `normalize_animation_speed`: Normalizing animation speed
