@@ -3,9 +3,7 @@
   "version": "0.4.11",
   "description": "MCP server for using Aseprite API",
   "type": "module",
-  "bin": {
-    "aseprite-mcp": "build/index.js"
-  },
+  "bin": "build/index.js",
   "engines": {
     "node": ">=18.0.0"
   },
